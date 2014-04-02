@@ -1,51 +1,70 @@
-diff -rupN package.orig/Config.in package/Config.in
---- package.orig/Config.in	2014-04-02 20:00:50.032570105 +0100
-+++ package/Config.in	2014-04-02 20:00:17.452570100 +0100
-@@ -2,6 +2,12 @@ menu "Target packages"
+diff -rupN buildroot-2014.02-old/package.orig/Config.in buildroot-2014.02/package/Config.in
+--- buildroot-2014.02-old/package.orig/Config.in	2014-04-01 12:02:18.996554478 +0100
++++ buildroot-2014.02/package/Config.in	2014-04-02 21:12:26.532570688 +0100
+@@ -2,6 +2,10 @@ menu "Target packages"
  
  source "package/busybox/Config.in"
  
 +menu "Rpicopter"
-+source "package/pigpio/Config.in"
-+source "package/servoblaster/Config.in"
-+source "package/qtsixa/Config.in"
++source "package/rpicopter/Config.in"
 +endmenu
 +
  menu "Audio and video applications"
  source "package/alsa-utils/Config.in"
  source "package/aumix/Config.in"
-diff -rupN package.orig/pigpio/Config.in package/pigpio/Config.in
---- package.orig/pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ package/pigpio/Config.in	2014-04-02 14:13:57.252567279 +0100
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/Config.in buildroot-2014.02/package/rpicopter/Config.in
+--- buildroot-2014.02-old/package.orig/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/Config.in	2014-04-02 22:11:28.964571169 +0100
+@@ -0,0 +1,12 @@
++config BR2_PACKAGE_RPICOPTER
++	bool "rpicopter"
++	help
++	  Adds rpicopter utils package
++	  https://github.com/rpicopter 
++
++if BR2_PACKAGE_RPICOPTER
++source "package/rpicopter/rpic-utils/Config.in"
++source "package/rpicopter/rpic-pigpio/Config.in"
++source "package/rpicopter/rpic-servoblaster/Config.in"
++source "package/rpicopter/rpic-qtsixa/Config.in"
++endif
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpicopter.mk buildroot-2014.02/package/rpicopter/rpicopter.mk
+--- buildroot-2014.02-old/package.orig/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-04-02 21:57:14.344571053 +0100
+@@ -0,0 +1 @@
++include package/rpicopter/*/*.mk
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/Config.in buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-04-02 22:15:02.748571198 +0100
 @@ -0,0 +1,5 @@
-+config BR2_PACKAGE_PIGPIO
-+	bool "pigpio"
++config BR2_PACKAGE_RPIC_PIGPIO
++	bool "rpic-pigpio"
 +	help
 +	  Adds pigpio package
-+	  http://abyz.co.uk/rpi/pigpio/ 
-diff -rupN package.orig/pigpio/pigpio.mk package/pigpio/pigpio.mk
---- package.orig/pigpio/pigpio.mk	1970-01-01 01:00:00.000000000 +0100
-+++ package/pigpio/pigpio.mk	2014-04-02 20:02:11.244570116 +0100
++	  https://github.com/rpicopter/pigpio
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-04-02 22:15:51.736571204 +0100
 @@ -0,0 +1,34 @@
 +#############################################################
 +#
-+# pigpio 
++# rpic-pigpio 
 +#
 +#############################################################
-+#PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
-+PIGPIO_VERSION = master 
-+PIGPIO_SITE_METHOD = git
-+PIGPIO_REPO_URL = https://github.com/gregd72002/pigpio.git
-+PIGPIO_SITE = $(call qstrip,$(PIGPIO_REPO_URL))
++#RPIC_PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
++RPIC_PIGPIO_VERSION = master
++RPIC_PIGPIO_SITE_METHOD = git
++RPIC_PIGPIO_REPO_URL = https://github.com/rpicopter/pigpio.git
++RPIC_PIGPIO_SITE = $(call qstrip,$(RPIC_PIGPIO_REPO_URL))
 +#PIGPIO_INSTALL_STAGING = YES
 +
 +#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
 +
-+define PIGPIO_BUILD_CMDS
++define RPIC_PIGPIO_BUILD_CMDS
 + $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
 +endef
 +
-+define PIGPIO_INSTALL_TARGET_CMDS
++define RPIC_PIGPIO_INSTALL_TARGET_CMDS
 +	$(INSTALL) -D -m 0755 -d              $(TARGET_DIR)/opt/pigpio/cgi
 +	$(INSTALL)  -m 0755 -d              $(TARGET_DIR)/usr/local/include
 +	$(INSTALL)  -m 0644 $(@D)/pigpio.h        $(TARGET_DIR)/usr/local/include
@@ -61,39 +80,37 @@ diff -rupN package.orig/pigpio/pigpio.mk package/pigpio/pigpio.mk
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN package.orig/qtsixa/Config.in package/qtsixa/Config.in
---- package.orig/qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ package/qtsixa/Config.in	2014-04-02 19:57:33.568570078 +0100
-@@ -0,0 +1,7 @@
-+config BR2_PACKAGE_QTSIXA
-+	bool "qtsixa"
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-04-02 22:19:56.236571238 +0100
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_RPIC_QTSIXA
++	bool "rpic-qtsixa"
 +	depends on BR2_PACKAGE_LIBUSB_COMPAT
 +	help
-+	  Adds support for PS3 SixAxis 1.5.1 controller
-+	  https://github.com/gregd72002/QtSixA based on:
-+	  http://qtsixa.sourceforge.net/
-Binary files package.orig/qtsixa/.Config.in.swp and package/qtsixa/.Config.in.swp differ
-diff -rupN package.orig/qtsixa/qtsixa.mk package/qtsixa/qtsixa.mk
---- package.orig/qtsixa/qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
-+++ package/qtsixa/qtsixa.mk	2014-04-02 19:56:31.604570070 +0100
++	  Adds support for PS3 SixAxis controller
++	  https://github.com/rpicopter/QtSixA 
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-04-02 22:17:24.468571217 +0100
 @@ -0,0 +1,43 @@
 +#############################################################
 +#
-+# qtsixa
++# rpic-qtsixa
 +#
 +#############################################################
 +#QTSIXA_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
-+QTSIXA_VERSION = master
-+QTSIXA_SITE_METHOD = git
-+QTSIXA_REPO_URL = https://github.com/gregd72002/QtSixA.git
-+QTSIXA_SITE = $(call qstrip,$(QTSIXA_REPO_URL))
++RPIC_QTSIXA_VERSION = master
++RPIC_QTSIXA_SITE_METHOD = git
++RPIC_QTSIXA_REPO_URL = https://github.com/rpicopter/QtSixA.git
++RPIC_QTSIXA_SITE = $(call qstrip,$(RPIC_QTSIXA_REPO_URL))
 +
-+define QTSIXA_BUILD_CMDS
++define RPIC_QTSIXA_BUILD_CMDS
 + $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/sixad
 + $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils
 +endef
 +
-+define QTSIXA_INSTALL_TARGET_CMDS
++define RPIC_QTSIXA_INSTALL_TARGET_CMDS
 +       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
 +       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/default
 +       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/init.d
@@ -120,38 +137,83 @@ diff -rupN package.orig/qtsixa/qtsixa.mk package/qtsixa/qtsixa.mk
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN package.orig/servoblaster/Config.in package/servoblaster/Config.in
---- package.orig/servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ package/servoblaster/Config.in	2014-04-02 14:13:57.252567279 +0100
-@@ -0,0 +1,6 @@
-+config BR2_PACKAGE_SERVOBLASTER
-+	bool "servoblaster"
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-04-02 22:17:55.520571221 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_SERVOBLASTER
++	bool "rpic-servoblaster"
 +	help
 +	  Adds servoblaster
-+	  https://github.com/gregd72002/ServoBlaster based on:
-+	  https://github.com/richardghirst/PiBits/tree/master/ServoBlaster
-diff -rupN package.orig/servoblaster/servoblaster.mk package/servoblaster/servoblaster.mk
---- package.orig/servoblaster/servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
-+++ package/servoblaster/servoblaster.mk	2014-04-02 20:01:52.736570113 +0100
++	  https://github.com/rpicopter/ServoBlaster
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-04-02 22:18:44.624571228 +0100
 @@ -0,0 +1,21 @@
 +#############################################################
 +#
-+# servoblaster
++# rpic-servoblaster
 +#
 +#############################################################
 +#SERVOBLASTER_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
-+SERVOBLASTER_VERSION = master 
-+SERVOBLASTER_SITE_METHOD = git
-+SERVOBLASTER_REPO_URL = https://github.com/gregd72002/servoblaster.git
-+SERVOBLASTER_SITE = $(call qstrip,$(SERVOBLASTER_REPO_URL))
++RPIC_SERVOBLASTER_VERSION = master
++RPIC_SERVOBLASTER_SITE_METHOD = git
++RPIC_SERVOBLASTER_REPO_URL = https://github.com/rpicopter/servoblaster.git
++RPIC_SERVOBLASTER_SITE = $(call qstrip,$(RPIC_SERVOBLASTER_REPO_URL))
 +
-+define SERVOBLASTER_BUILD_CMDS
++define RPIC_SERVOBLASTER_BUILD_CMDS
 + $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/user all
 +endef
 +
-+define SERVOBLASTER_INSTALL_TARGET_CMDS
++define RPIC_SERVOBLASTER_INSTALL_TARGET_CMDS
 +       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
 +       $(INSTALL) -m 0755 $(@D)/user/servod         $(TARGET_DIR)/usr/local/bin
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/Config.in buildroot-2014.02/package/rpicopter/rpic-utils/Config.in
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-04-02 22:04:42.868571114 +0100
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_RPIC_UTILS
++	bool "rpic-utils"
++#	select BR2_PACKAGE_BLUEZ_UTILS_COMPAT
++#	select BR2_PACKAGE_UDEV
++	help
++	  Adds utils package
++	  https://github.com/rpicopter/utils
+diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
+--- buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-04-02 23:03:25.436571592 +0100
+@@ -0,0 +1,31 @@
++#############################################################
++#
++# rpic-utils 
++#
++#############################################################
++RPIC_UTILS_VERSION = master
++RPIC_UTILS_SITE_METHOD = git
++RPIC_UTILS_REPO_URL = https://github.com/rpicopter/utils.git
++RPIC_UTILS_SITE = $(call qstrip,$(RPIC_UTILS_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_UTILS_BUILD_CMDS
++endef
++
++define RPIC_UTILS_INSTALL_TARGET_CMDS
++	install -d $(TARGET_DIR)/etc/udev/rules.d
++	install -d $(TARGET_DIR)/usr/local/bin
++	install -d $(TARGET_DIR)/var/local
++	install -m 655 $(@D)/root/etc/udev/rules.d/ps3controller.rules $(TARGET_DIR)/etc/udev/rules.d/ps3controller.rules
++	install -m 655 $(@D)/root/etc/udev/rules.d/91-btremove.rules $(TARGET_DIR)/etc/udev/rules.d/91-btremove.rules
++	install -m 655 $(@D)/root/etc/udev/rules.d/91-btadd.rules $(TARGET_DIR)/etc/udev/rules.d/91-btadd.rules
++	install -m 755 $(@D)/root/usr/local/bin/udevrun.sh $(TARGET_DIR)/usr/local/bin/udevrun.sh
++	install -m 755 $(@D)/root/usr/local/bin/sixpair.sh $(TARGET_DIR)/usr/local/bin/sixpair.sh
++	install -m 755 $(@D)/root/usr/local/bin/pand.sh $(TARGET_DIR)/usr/local/bin/pand.sh
++	install -m 755 $(@D)/root/usr/local/bin/btstart.sh $(TARGET_DIR)/usr/local/bin/btstart.sh
++	install -m 755 $(@D)/root/usr/local/bin/btstop.sh $(TARGET_DIR)/usr/local/bin/btstop.sh
 +endef
 +
 +$(eval $(generic-package))
