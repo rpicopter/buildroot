@@ -1,0 +1,74 @@
+diff -rupN xenomai-2.6.3.orig/scripts/prepare-kernel.sh xenomai-2.6.3/scripts/prepare-kernel.sh
+--- xenomai-2.6.3.orig/scripts/prepare-kernel.sh	2013-05-25 14:44:03.000000000 +0100
++++ xenomai-2.6.3/scripts/prepare-kernel.sh	2014-03-31 21:50:46.168547543 +0100
+@@ -170,7 +170,7 @@ generate_patch() {
+ }
+ 
+ 
+-usage='usage: prepare-kernel --linux=<linux-tree> --ipipe=<ipipe-patch> [--arch=<arch>] [--outpatch=<file> [--filterkvers=y|n] [--filterarch=y|n]] [--forcelink] [--default] [--verbose]'
++usage='usage: prepare-kernel --linux=<linux-tree> --ipipe=<ipipe-patch> [--arch=<arch>] [--board=<board>] [--outpatch=<file> [--filterkvers=y|n] [--filterarch=y|n]] [--forcelink] [--default] [--verbose]'
+ me=`basename $0`
+ 
+ while test $# -gt 0; do
+@@ -190,6 +190,9 @@ while test $# -gt 0; do
+     --arch=*)
+ 	linux_arch=`echo $1|sed -e 's,^--arch=\\(.*\\)$,\\1,g'`
+ 	;;
++    --board=*)
++	linux_board=`echo $1|sed -e 's,^--board=\\(.*\\)$,\\1,g'`
++	;;
+     --outpatch=*)
+ 	output_patch=`echo $1|sed -e 's,^--outpatch=\\(.*\\)$,\\1,g'`
+ 	;;
+@@ -407,12 +410,51 @@ else
+    patchdir=`cd $patchdir && pwd`
+    ipipe_patch=$patchdir/`basename $ipipe_patch`
+    curdir=$PWD
++   if test x$linux_board != x; then
++	ipipe_base_name=`basename ${ipipe_patch%-*}`
++	echo -n "Checking for: $ipipe_base_name-$linux_board-pre-*.patch   "
++        pre_ipipe_patch="`( ls $patchdir/$ipipe_base_name-$linux_board-pre-* $patchdir/$linux_board/$ipipe_name-$linux_board-pre-*|sort -r ) 2>/dev/null | head -n1`"
++	if test x$pre_ipipe_patch != x; then
++	   echo "Found: $pre_ipipe_patch"
++	else
++	   echo "Not found."
++	fi
++	echo -n "Checking for: $ipipe_base_name-$linux_board-post-*.patch   "
++        post_ipipe_patch="`( ls $patchdir/$ipipe_base_name-$linux_board-post-* $patchdir/$linux_board/$ipipe_name-$linux_board-post-*|sort -r ) 2>/dev/null | head -n1`"
++	if test x$post_ipipe_patch != x; then
++	   echo "Found: $post_ipipe_patch"
++	else
++	   echo "Not found."
++	fi
++   fi
++   if test x$pre_ipipe_patch != x; then
++	if test x$verbose = x1; then
++		echo "Applying board patch: $pre_ipipe_patch"
++	fi
++   	cd $linux_tree && patch --dry-run -p1 -f < $pre_ipipe_patch || { 
++        	cd $curdir;
++        	echo "$me: Unable to patch kernel $linux_version$linux_EXTRAVERSION with `basename $pre_pipe_patch`." >&2
++        	exit 2;
++   	}
++   	patch -p1 -f -s < $pre_ipipe_patch
++   fi
+    cd $linux_tree && patch --dry-run -p1 -f < $ipipe_patch || { 
+         cd $curdir;
+         echo "$me: Unable to patch kernel $linux_version$linux_EXTRAVERSION with `basename $ipipe_patch`." >&2
+         exit 2;
+    }
+    patch -p1 -f -s < $ipipe_patch
++   if test x$post_ipipe_patch != x; then
++	if test x$verbose = x1; then
++		echo "Applying board patch: $post_ipipe_patch"
++	fi
++	cd $linux_tree && patch --dry-run -p1 -f < $post_ipipe_patch || { 
++        	cd $curdir;
++        	echo "$me: Unable to patch kernel $linux_version$linux_EXTRAVERSION with `basename $post_ipipe_patch`." >&2
++        	exit 2;
++   	}
++   	patch -p1 -f -s < $post_ipipe_patch
++   fi
+    cd $curdir
+ fi
+ 

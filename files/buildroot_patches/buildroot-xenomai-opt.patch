@@ -1,0 +1,41 @@
+diff -rupN buildroot.orig/linux/Config.ext.in buildroot/linux/Config.ext.in
+--- buildroot.orig/linux/Config.ext.in	2014-03-27 18:29:40.944499478 +0000
++++ buildroot/linux/Config.ext.in	2014-03-31 22:27:28.712547842 +0100
+@@ -29,6 +29,12 @@ config BR2_LINUX_KERNEL_EXT_XENOMAI_ADEO
+ 	  Download it at http://download.gna.org/adeos/patches/v2.6/$(ARCH)/
+ 	  and verify that your kernel version in buildroot matches.
+ 
++config BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_OPT
++	depends on BR2_LINUX_KERNEL_EXT_XENOMAI
++	string "Additional parameters"
++	help
++	  Optionally, specify any additional parameters to pass over to Xenomai kernel patcher.
++
+ # RTAI
+ config BR2_LINUX_KERNEL_EXT_RTAI
+ 	bool "RTAI Real-time patch"
+diff -rupN buildroot.orig/linux/linux-ext-xenomai.mk buildroot/linux/linux-ext-xenomai.mk
+--- buildroot.orig/linux/linux-ext-xenomai.mk	2014-03-27 18:29:40.944499478 +0000
++++ buildroot/linux/linux-ext-xenomai.mk	2014-03-31 22:28:27.016547849 +0100
+@@ -8,10 +8,12 @@ ifeq ($(BR2_LINUX_KERNEL_EXT_XENOMAI),y)
+ # Add dependency to xenomai (user-space) which provide ksrc part
+ LINUX_DEPENDENCIES += xenomai
+ 
++XENOMAI_ADEOS_ADDITIONAL_OPT = $(call qstrip,$(BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_OPT))
++
+ # Adeos patch version
+ XENOMAI_ADEOS_PATCH = $(call qstrip,$(BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_PATCH))
+ ifeq ($(XENOMAI_ADEOS_PATCH),)
+-XENOMAI_ADEOS_OPT = --default
++XENOMAI_ADEOS_OPT = --default 
+ else
+ XENOMAI_ADEOS_OPT = --adeos=$(XENOMAI_ADEOS_PATCH)
+ endif
+@@ -22,6 +24,7 @@ define XENOMAI_PREPARE_KERNEL
+ 		--linux=$(LINUX_DIR) \
+ 		--arch=$(KERNEL_ARCH) \
+ 		$(XENOMAI_ADEOS_OPT) \
++		$(XENOMAI_ADEOS_ADDITIONAL_OPT) \
+ 		--verbose
+ endef
+ 

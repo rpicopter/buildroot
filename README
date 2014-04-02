@@ -1,0 +1,21 @@
+This repository contains all necessary instructions needed to build an Rpicopter image.
+
+This contains:
+patches
+config files
+instructions
+
+Instructions:
+get buildroot-2014.02
+extract it
+patch it using files in files/buildroot_patches folder
+copy files/configs/buildroot_config into your buildroot folder and rename it to .config
+check that all paths are correctly set in .config
+	- global patch directory
+	- default kernel config path
+	- TODO: raspberrypi config.txt 
+	- xenomai ipipe file path
+
+make
+
+see buildroot/board/raspberrpi for further details on how to trasnfer it onto SD card

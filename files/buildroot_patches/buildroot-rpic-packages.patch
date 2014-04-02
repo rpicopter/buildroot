@@ -1,0 +1,157 @@
+diff -rupN package.orig/Config.in package/Config.in
+--- package.orig/Config.in	2014-04-02 20:00:50.032570105 +0100
++++ package/Config.in	2014-04-02 20:00:17.452570100 +0100
+@@ -2,6 +2,12 @@ menu "Target packages"
+ 
+ source "package/busybox/Config.in"
+ 
++menu "Rpicopter"
++source "package/pigpio/Config.in"
++source "package/servoblaster/Config.in"
++source "package/qtsixa/Config.in"
++endmenu
++
+ menu "Audio and video applications"
+ source "package/alsa-utils/Config.in"
+ source "package/aumix/Config.in"
+diff -rupN package.orig/pigpio/Config.in package/pigpio/Config.in
+--- package.orig/pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/pigpio/Config.in	2014-04-02 14:13:57.252567279 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_PIGPIO
++	bool "pigpio"
++	help
++	  Adds pigpio package
++	  http://abyz.co.uk/rpi/pigpio/ 
+diff -rupN package.orig/pigpio/pigpio.mk package/pigpio/pigpio.mk
+--- package.orig/pigpio/pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/pigpio/pigpio.mk	2014-04-02 20:02:11.244570116 +0100
+@@ -0,0 +1,34 @@
++#############################################################
++#
++# pigpio 
++#
++#############################################################
++#PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
++PIGPIO_VERSION = master 
++PIGPIO_SITE_METHOD = git
++PIGPIO_REPO_URL = https://github.com/gregd72002/pigpio.git
++PIGPIO_SITE = $(call qstrip,$(PIGPIO_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define PIGPIO_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define PIGPIO_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 -d              $(TARGET_DIR)/opt/pigpio/cgi
++	$(INSTALL)  -m 0755 -d              $(TARGET_DIR)/usr/local/include
++	$(INSTALL)  -m 0644 $(@D)/pigpio.h        $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0644 $(@D)/pigpiod_if.h    $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpio.a     $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpiod_if.a $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++	$(INSTALL) -m 0755 $(@D)/pig2vcd         $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigpiod        $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigs           $(TARGET_DIR)/usr/local/bin
++
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/qtsixa/Config.in package/qtsixa/Config.in
+--- package.orig/qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/qtsixa/Config.in	2014-04-02 19:57:33.568570078 +0100
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_QTSIXA
++	bool "qtsixa"
++	depends on BR2_PACKAGE_LIBUSB_COMPAT
++	help
++	  Adds support for PS3 SixAxis 1.5.1 controller
++	  https://github.com/gregd72002/QtSixA based on:
++	  http://qtsixa.sourceforge.net/
+Binary files package.orig/qtsixa/.Config.in.swp and package/qtsixa/.Config.in.swp differ
+diff -rupN package.orig/qtsixa/qtsixa.mk package/qtsixa/qtsixa.mk
+--- package.orig/qtsixa/qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/qtsixa/qtsixa.mk	2014-04-02 19:56:31.604570070 +0100
+@@ -0,0 +1,43 @@
++#############################################################
++#
++# qtsixa
++#
++#############################################################
++#QTSIXA_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++QTSIXA_VERSION = master
++QTSIXA_SITE_METHOD = git
++QTSIXA_REPO_URL = https://github.com/gregd72002/QtSixA.git
++QTSIXA_SITE = $(call qstrip,$(QTSIXA_REPO_URL))
++
++define QTSIXA_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/sixad
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils
++endef
++
++define QTSIXA_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/default
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/init.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/logrotate.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad/profiles
++
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/default/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/init.d/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.log $(TARGET_DIR)/etc/logrotate.d/sixad
++	$(INSTALL) -m 755 $(@D)/sixad/sixad $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-bin $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-sixaxis $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-remote $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-3in1 $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-raw $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/sixad-dbus-blocker $(TARGET_DIR)/usr/local/bin/
++	@chmod 777 -R $(TARGET_DIR)/var/lib/sixad/
++
++
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair-kbd $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/hidraw-dump $(TARGET_DIR)/usr/local/bin/
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/servoblaster/Config.in package/servoblaster/Config.in
+--- package.orig/servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/servoblaster/Config.in	2014-04-02 14:13:57.252567279 +0100
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_SERVOBLASTER
++	bool "servoblaster"
++	help
++	  Adds servoblaster
++	  https://github.com/gregd72002/ServoBlaster based on:
++	  https://github.com/richardghirst/PiBits/tree/master/ServoBlaster
+diff -rupN package.orig/servoblaster/servoblaster.mk package/servoblaster/servoblaster.mk
+--- package.orig/servoblaster/servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/servoblaster/servoblaster.mk	2014-04-02 20:01:52.736570113 +0100
+@@ -0,0 +1,21 @@
++#############################################################
++#
++# servoblaster
++#
++#############################################################
++#SERVOBLASTER_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++SERVOBLASTER_VERSION = master 
++SERVOBLASTER_SITE_METHOD = git
++SERVOBLASTER_REPO_URL = https://github.com/gregd72002/servoblaster.git
++SERVOBLASTER_SITE = $(call qstrip,$(SERVOBLASTER_REPO_URL))
++
++define SERVOBLASTER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/user all
++endef
++
++define SERVOBLASTER_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++       $(INSTALL) -m 0755 $(@D)/user/servod         $(TARGET_DIR)/usr/local/bin
++endef
++
++$(eval $(generic-package))
