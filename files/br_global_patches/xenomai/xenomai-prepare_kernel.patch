@@ -1,0 +1,35 @@
+diff -rupN xenomai-2.6.3.orig/scripts/prepare-kernel.sh xenomai-2.6.3/scripts/prepare-kernel.sh
+--- xenomai-2.6.3.orig/scripts/prepare-kernel.sh	2013-05-25 14:44:03.000000000 +0100
++++ xenomai-2.6.3/scripts/prepare-kernel.sh	2014-04-04 16:38:38.490435289 +0100
+@@ -403,16 +403,21 @@ else
+          ipipe_patch=
+       fi
+    done
+-   patchdir=`dirname $ipipe_patch`; 
+-   patchdir=`cd $patchdir && pwd`
+-   ipipe_patch=$patchdir/`basename $ipipe_patch`
+-   curdir=$PWD
+-   cd $linux_tree && patch --dry-run -p1 -f < $ipipe_patch || { 
+-        cd $curdir;
+-        echo "$me: Unable to patch kernel $linux_version$linux_EXTRAVERSION with `basename $ipipe_patch`." >&2
+-        exit 2;
+-   }
+-   patch -p1 -f -s < $ipipe_patch
++   startdir=`pwd`
++   for patch in $(echo $ipipe_patch | tr "," "\n")
++   do
++	   cd $startdir
++	   patchdir=`dirname $patch`;  #relative dir
++	   patchdir=`cd $patchdir && pwd`; #absolute dir
++	   patch=$patchdir/`basename $patch`
++	   curdir=$PWD
++	   cd $linux_tree && patch --dry-run -p1 -f < $patch || { 
++		cd $curdir;
++		echo "$me: Unable to patch kernel $linux_version$linux_EXTRAVERSION with `basename $patch`." >&2
++		exit 2;
++	   }
++	   patch -p1 -f -s < $patch
++   done 
+    cd $curdir
+ fi
+ 

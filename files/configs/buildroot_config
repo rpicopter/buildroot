@@ -288,8 +288,7 @@ BR2_LINUX_KERNEL_INSTALL_TARGET=y
 # Linux Kernel Extensions
 #
 BR2_LINUX_KERNEL_EXT_XENOMAI=y
-BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_PATCH="~/rpicopter/buildroot/files/xenomai/ipipe-core-3.10.34-arm-1.patch"
-BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_OPT="--board=raspberry"
+BR2_LINUX_KERNEL_EXT_XENOMAI_ADEOS_PATCH="/home/kiwi/rpicopter/buildroot/files/xenomai/ipipe-core-3.10.34-arm-1.patch,/home/kiwi/rpicopter/buildroot/files/xenomai/ipipe-core-3.10.34-arm-raspberry-post-1.patch"
 # BR2_LINUX_KERNEL_EXT_RTAI is not set
 
 #
