@@ -11,10 +11,10 @@ extract it
 patch it using files in files/buildroot_patches folder
 copy files/configs/buildroot_config into your buildroot folder and rename it to .config
 check that all paths are correctly set in .config
-	- global patch directory
-	- default kernel config path
-	- TODO: raspberrypi config.txt 
-	- xenomai ipipe file path
+	- global patch directory (~/rpicopter/buildroot/files/br_global_patches)
+	- default kernel config path (this needs to be a fully qualified path)
+	- post image create script
+	- xenomai ipipe file path (~/rpicopter/buildroot/files/xenomai/ipipe-core-3.10.34-arm-1.patch)
 
 make
 
