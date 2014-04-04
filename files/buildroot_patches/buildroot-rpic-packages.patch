@@ -1,20 +1,21 @@
-diff -rupN buildroot-2014.02-old/package.orig/Config.in buildroot-2014.02/package/Config.in
---- buildroot-2014.02-old/package.orig/Config.in	2014-04-01 12:02:18.996554478 +0100
-+++ buildroot-2014.02/package/Config.in	2014-04-02 21:12:26.532570688 +0100
-@@ -2,6 +2,10 @@ menu "Target packages"
+diff -rupN tmp/buildroot-2014.02/package/Config.in buildroot-2014.02/package/Config.in
+--- tmp/buildroot-2014.02/package/Config.in	2014-02-27 20:51:23.000000000 +0000
++++ buildroot-2014.02/package/Config.in	2014-04-04 22:14:35.218053884 +0100
+@@ -2,6 +2,11 @@ menu "Target packages"
  
  source "package/busybox/Config.in"
  
 +menu "Rpicopter"
++source "package/upstart/Config.in"
 +source "package/rpicopter/Config.in"
 +endmenu
 +
  menu "Audio and video applications"
  source "package/alsa-utils/Config.in"
  source "package/aumix/Config.in"
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/Config.in buildroot-2014.02/package/rpicopter/Config.in
---- buildroot-2014.02-old/package.orig/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/Config.in	2014-04-02 22:11:28.964571169 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/Config.in buildroot-2014.02/package/rpicopter/Config.in
+--- tmp/buildroot-2014.02/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/Config.in	2014-04-03 10:24:54.808577143 +0100
 @@ -0,0 +1,12 @@
 +config BR2_PACKAGE_RPICOPTER
 +	bool "rpicopter"
@@ -28,23 +29,23 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/Config.in buildroot-2014
 +source "package/rpicopter/rpic-servoblaster/Config.in"
 +source "package/rpicopter/rpic-qtsixa/Config.in"
 +endif
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpicopter.mk buildroot-2014.02/package/rpicopter/rpicopter.mk
---- buildroot-2014.02-old/package.orig/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-04-02 21:57:14.344571053 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpicopter.mk buildroot-2014.02/package/rpicopter/rpicopter.mk
+--- tmp/buildroot-2014.02/package/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-04-03 10:24:54.808577143 +0100
 @@ -0,0 +1 @@
 +include package/rpicopter/*/*.mk
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/Config.in buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-04-02 22:15:02.748571198 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-04-03 10:24:54.808577143 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_PIGPIO
 +	bool "rpic-pigpio"
 +	help
 +	  Adds pigpio package
 +	  https://github.com/rpicopter/pigpio
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-04-02 22:15:51.736571204 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-04-03 10:24:54.808577143 +0100
 @@ -0,0 +1,34 @@
 +#############################################################
 +#
@@ -80,9 +81,9 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-pigpio/rpic-pigpio.
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-04-02 22:19:56.236571238 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-04-03 10:24:54.808577143 +0100
 @@ -0,0 +1,6 @@
 +config BR2_PACKAGE_RPIC_QTSIXA
 +	bool "rpic-qtsixa"
@@ -90,9 +91,9 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/Config.in bu
 +	help
 +	  Adds support for PS3 SixAxis controller
 +	  https://github.com/rpicopter/QtSixA 
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-04-02 22:17:24.468571217 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-04-03 10:24:54.812577143 +0100
 @@ -0,0 +1,43 @@
 +#############################################################
 +#
@@ -137,18 +138,18 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-04-02 22:17:55.520571221 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-04-03 10:24:54.812577143 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_SERVOBLASTER
 +	bool "rpic-servoblaster"
 +	help
 +	  Adds servoblaster
 +	  https://github.com/rpicopter/ServoBlaster
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-04-02 22:18:44.624571228 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-04-03 10:24:54.812577143 +0100
 @@ -0,0 +1,21 @@
 +#############################################################
 +#
@@ -171,9 +172,9 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-servoblaster/rpic-s
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/Config.in buildroot-2014.02/package/rpicopter/rpic-utils/Config.in
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-04-02 22:04:42.868571114 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-utils/Config.in buildroot-2014.02/package/rpicopter/rpic-utils/Config.in
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-04-03 10:24:54.812577143 +0100
 @@ -0,0 +1,7 @@
 +config BR2_PACKAGE_RPIC_UTILS
 +	bool "rpic-utils"
@@ -182,9 +183,9 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/Config.in bui
 +	help
 +	  Adds utils package
 +	  https://github.com/rpicopter/utils
-diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
---- buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-04-02 23:03:25.436571592 +0100
+diff -rupN tmp/buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
+--- tmp/buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-04-03 10:24:54.812577143 +0100
 @@ -0,0 +1,31 @@
 +#############################################################
 +#
@@ -217,3 +218,91 @@ diff -rupN buildroot-2014.02-old/package.orig/rpicopter/rpic-utils/rpic-utils.mk
 +endef
 +
 +$(eval $(generic-package))
+diff -rupN tmp/buildroot-2014.02/package/upstart/Config.in buildroot-2014.02/package/upstart/Config.in
+--- tmp/buildroot-2014.02/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/Config.in	2014-04-04 22:11:01.534057928 +0100
+@@ -0,0 +1,13 @@
++config BR2_PACKAGE_UPSTART
++	bool "upstart"
++	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV
++	depends on BR2_INET_IPV6
++	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
++	select BR2_PACKAGE_DBUS
++	select BR2_PACKAGE_LIBNIH
++	select BR2_PACKAGE_JSON_C
++	help
++		Upstart is an event-based replacement for the /sbin/init
++		daemon which handles starting of tasks and services
++		during boot, stopping them during shutdown and supervising 
++		them while the system is running.
+diff -rupN tmp/buildroot-2014.02/package/upstart/network.conf buildroot-2014.02/package/upstart/network.conf
+--- tmp/buildroot-2014.02/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/network.conf	2014-04-04 22:11:26.418057457 +0100
+@@ -0,0 +1,15 @@
++# networking
++##
++
++description "starts the network"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	/sbin/ifup -a
++end script
++
++post-stop script
++	/sbin/ifdown -a
++end script
+diff -rupN tmp/buildroot-2014.02/package/upstart/upstart.mk buildroot-2014.02/package/upstart/upstart.mk
+--- tmp/buildroot-2014.02/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/upstart.mk	2014-04-04 22:16:21.278051878 +0100
+@@ -0,0 +1,22 @@
++UPSTART_VERSION = 1.12.1
++UPSTART_SITE = http://upstart.ubuntu.com/download/$(UPSTART_VERSION)
++UPSTART_SOURCE = upstart-$(UPSTART_VERSION).tar.gz
++UPSTART_INSTALL_STAGING = YES
++UPSTART_DEPENDENCIES = udev dbus libnih json-c
++UPSTART_POST_INSTALL_TARGET_HOOKS += UPSTART_REPLACE_INITSCRIPTS
++
++UPSTART_AUTORECONF = YES
++
++UPSTART_CONF_OPT += --exec-prefix=/
++
++define UPSTART_REPLACE_INITSCRIPTS
++	#replace sysinitv scripts with upstart ones
++	rm -f $(TARGET_DIR)/etc/init.d/S20urandom
++	rm -f $(TARGET_DIR)/etc/init.d/S40network
++	$(INSTALL) -m 0644 package/upstart/urandom.conf \
++		$(TARGET_DIR)/etc/init
++	$(INSTALL) -m 0644 package/upstart/network.conf \
++		$(TARGET_DIR)/etc/init
++endef
++
++$(eval $(autotools-package))
+diff -rupN tmp/buildroot-2014.02/package/upstart/urandom.conf buildroot-2014.02/package/upstart/urandom.conf
+--- tmp/buildroot-2014.02/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/urandom.conf	2014-04-04 22:12:09.478056642 +0100
+@@ -0,0 +1,22 @@
++# urandom
++##
++
++description "saves the random seed between reboots"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	if [ -f /etc/random-seed ]
++	then
++		cat /etc/random-seed >/dev/urandom
++	fi
++	rm -f /etc/random-seed
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script
++
++post-stop script
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script
