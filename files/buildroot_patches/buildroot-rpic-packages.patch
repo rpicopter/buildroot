@@ -80,8 +80,8 @@ diff -rupN ../tmp/buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in
 @@ -0,0 +1,7 @@
 +config BR2_PACKAGE_RPIC_BLUEZ_TOOLS
 +	bool "rpic-bluez-tools"
-+    depends on dbus-glib
-+    depends on readline
++    depends on BR2_PACKAGE_DBUS_GLIB 
++    depends on BR2_PACKAGE_DBUS_READLINE
 +	help
 +      bluez-tools
 +	  https://github.com/rpicopter/bluez-tools
