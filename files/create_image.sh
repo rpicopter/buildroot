@@ -57,14 +57,14 @@ if test x$dev = x; then
    dev=/dev/null
 fi
 
-for f in $dev*; do 
+for f in $dev?; do 
 echo -n "Unmounting device $f ... "
 sudo umount $f
 echo "Done." 
 done
 
 echo -n "Writing image to the device... "
-dd if=rpicopter.img of=$dev bs=4M
+sudo dd if=rpicopter.img of=$dev bs=4M
 sync;sync
 echo "DONE. You can now safely remove your SD card and place it in your Raspberry Pi."
 echo "Enjoy!"
