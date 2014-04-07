@@ -1,0 +1,15 @@
+diff -rupN bluez5_utils-5.17.orig/src/plugin.h bluez5_utils-5.17/src/plugin.h
+--- bluez5_utils-5.17.orig/src/plugin.h	2014-04-07 22:03:47.542110206 +0100
++++ bluez5_utils-5.17/src/plugin.h	2014-04-07 22:04:15.710883416 +0100
+@@ -42,9 +42,9 @@ struct bluetooth_plugin_desc {
+ #else
+ #define BLUETOOTH_PLUGIN_DEFINE(name, version, priority, init, exit) \
+ 		extern struct btd_debug_desc __start___debug[] \
+-				__attribute__ ((weak, visibility("hidden"))); \
++				__attribute__ ((weak, visibility("default"))); \
+ 		extern struct btd_debug_desc __stop___debug[] \
+-				__attribute__ ((weak, visibility("hidden"))); \
++				__attribute__ ((weak, visibility("default"))); \
+ 		extern struct bluetooth_plugin_desc bluetooth_plugin_desc \
+ 				__attribute__ ((visibility("default"))); \
+ 		struct bluetooth_plugin_desc bluetooth_plugin_desc = { \
