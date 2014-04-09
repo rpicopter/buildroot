@@ -69,4 +69,5 @@ sync;sync
 echo "DONE. You can now safely remove your SD card and place it in your Raspberry Pi."
 echo "Enjoy!"
 echo
+exit 0
 
