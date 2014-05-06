@@ -1,7 +1,13 @@
-arm_freq=700
+arm_freq=900
 core_freq=250
+sdram_freq=450
+over_voltage=2
+
+#arm_freq=700
+#core_freq=250
+#sdram_freq=400
+#over_voltage=0
+
 kernel=zImage
 disable_overscan=1
 gpu_mem_512=8
-sdram_freq=400
-over_voltage=0
