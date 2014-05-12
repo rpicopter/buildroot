@@ -266,8 +266,8 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in bu
 +	  https://github.com/rpicopter/controller
 diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk
 --- buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk	2014-04-11 20:03:53.645683606 +0100
-@@ -0,0 +1,22 @@
++++ buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk	2014-04-26 11:32:49.789442456 +0100
+@@ -0,0 +1,25 @@
 +#############################################################
 +#
 +# rpic-controller 
@@ -281,8 +281,11 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-control
 +
 +#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
 +
++MYCXXFLAGS="$(CXXFLAGS_FOR_BUILD) -I$(STAGING_DIR)/usr/include/xenomai"
++MYCPPFLAGS="$(CPPFLAGS_FOR_BUILD) -I$(STAGING_DIR)/usr/include/xenomai"
++
 +define RPIC_CONTROLLER_BUILD_CMDS
-+ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) CXXFLAGS_FOR_BUILD=$(MYCXXFLAGS) CPPFLAGS_FOR_BUILD=$(MYCPPFLAGS) -C $(@D) all
 +endef
 +
 +define RPIC_CONTROLLER_INSTALL_TARGET_CMDS
@@ -447,8 +450,8 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in buildro
 +	  https://github.com/rpicopter/utils
 diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
 --- buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-04-10 23:03:11.630236998 +0100
-@@ -0,0 +1,47 @@
++++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-05-07 09:04:23.966433177 +0100
+@@ -0,0 +1,50 @@
 +#############################################################
 +#
 +# rpic-utils 
@@ -479,20 +482,23 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk bui
 +	install -m 644 $(@D)/root/etc/bluetooth/main.conf $(TARGET_DIR)/etc/bluetooth/main.conf
 +	install -m 644 $(@D)/root/etc/bluetooth/network.conf $(TARGET_DIR)/etc/bluetooth/network.conf
 +	install -m 644 $(@D)/root/etc/bluetooth/pin $(TARGET_DIR)/etc/bluetooth/pin
-+	install -m 644 $(@D)/root/etc/udev/rules.d/ps3controller.rules $(TARGET_DIR)/etc/udev/rules.d/ps3controller.rules
 +	install -m 644 $(@D)/root/etc/udev/rules.d/91-btremove.rules $(TARGET_DIR)/etc/udev/rules.d/91-btremove.rules
 +	install -m 644 $(@D)/root/etc/udev/rules.d/91-btadd.rules $(TARGET_DIR)/etc/udev/rules.d/91-btadd.rules
 +	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetadd.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetadd.rules
 +	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetremove.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetremove.rules
 +	install -m 755 $(@D)/root/etc/init.d/S09dbus $(TARGET_DIR)/etc/init.d/S09dbus
 +	install -m 755 $(@D)/root/etc/init.d/S90i2c $(TARGET_DIR)/etc/init.d/S90i2c
++	install -m 755 $(@D)/root/etc/init.d/S98ps3controller $(TARGET_DIR)/etc/init.d/S98ps3controller
++	install -m 755 $(@D)/root/etc/init.d/S99controller $(TARGET_DIR)/etc/init.d/S99controller
 +	install -m 755 $(@D)/root/usr/local/bin/udevrun.sh $(TARGET_DIR)/usr/local/bin/udevrun.sh
 +	install -m 755 $(@D)/root/usr/local/bin/sixpair.sh $(TARGET_DIR)/usr/local/bin/sixpair.sh
 +	install -m 755 $(@D)/root/usr/local/bin/btnetstart.sh $(TARGET_DIR)/usr/local/bin/btnetstart.sh
 +	install -m 755 $(@D)/root/usr/local/bin/btnetstop.sh $(TARGET_DIR)/usr/local/bin/btnetstop.sh
 +	install -m 755 $(@D)/root/usr/local/bin/btstart.sh $(TARGET_DIR)/usr/local/bin/btstart.sh
 +	install -m 755 $(@D)/root/usr/local/bin/btstop.sh $(TARGET_DIR)/usr/local/bin/btstop.sh
++	install -m 755 $(@D)/root/usr/local/bin/controller.sh $(TARGET_DIR)/usr/local/bin/controller.sh
 +	mkdir -p $(TARGET_DIR)/etc/dropbear
++	mkdir -p $(TARGET_DIR)/var/local
 +endef
 +
 +$(eval $(generic-package))
