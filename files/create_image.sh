@@ -57,6 +57,17 @@ if test x$dev = x; then
    dev=/dev/null
 fi
 
+confirm=y
+if test x$dev = x/dev/sda; then
+   confirm=n
+   echo "Are you sure you want to write to: $dev [y/N]?"
+   read confirm
+fi
+if test x$confirm != xy; then
+   exit 0;
+fi
+
+
 for f in $dev?; do 
 echo -n "Unmounting device $f ... "
 sudo umount $f
