@@ -10,4 +10,4 @@ over_voltage=2
 
 kernel=zImage
 disable_overscan=1
-gpu_mem_512=8
+gpu_mem_512=32
