@@ -281,7 +281,7 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-control
 +RPIC_CONTROLLER_REPO_URL = https://github.com/rpicopter/controller.git
 +RPIC_CONTROLLER_SITE = $(call qstrip,$(RPIC_CONTROLLER_REPO_URL))
 +RPIC_CONTROLLER_DEPENDENCIES = xenomai linux rpic-utils
-+OPT_FLAGS=-I$(TARGET_DIR)/usr/include/xenomai
++OPT_FLAGS=-I$(STAGING_DIR)/usr/include/xenomai
 +
 +#PIGPIO_INSTALL_STAGING = YES
 +
