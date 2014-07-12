@@ -1,633 +1,633 @@
-diff -rupN buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk
---- buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk	2014-07-12 13:49:40.095915528 +0100
-+++ buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,59 +0,0 @@
--################################################################################ 
--# 
--# bluez5_utils 
--# 
--################################################################################ 
-- 
--BLUEZ5_UTILS_VERSION = 5.17
--BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
--BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
--BLUEZ5_UTILS_INSTALL_STAGING = YES
--BLUEZ5_UTILS_DEPENDENCIES = dbus libglib2 libical readline
--BLUEZ5_UTILS_CONF_OPT = --enable-tools --enable-library --enable-sixaxis 
--BLUEZ5_UTILS_LICENSE = GPLv2+ LGPLv2.1+
--BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
--
--# experimental plugins
--ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL),y)
--	BLUEZ5_UTILS_CONF_OPT += --enable-experimental
--else
--	BLUEZ5_UTILS_CONF_OPT += --disable-experimental
--endif
-- 
--# install gatttool (For some reason upstream choose not to do it by default) 
--ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL),y)
--define BLUEZ5_UTILS_INSTALL_GATTTOOL 
--	$(INSTALL) -D -m 0755 $(@D)/attrib/gatttool $(TARGET_DIR)/usr/bin 
--endef 
--BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_GATTTOOL 
--endif 
--
--define BLUEZ5_UTILS_INSTALL
--	$(LIBTOOL) --finish /usr/lib/bluetooth/plugins
--	$(LIBTOOL) --finish /usr/lib
--endef
-- 
--# enable test 
--ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_TEST),y) 
--	BLUEZ5_UTILS_CONF_OPT += --enable-test 
--else 
--	BLUEZ5_UTILS_CONF_OPT += --disable-test 
--endif 
-- 
--# use udev if available 
--ifeq ($(BR2_PACKAGE_UDEV),y) 
--        BLUEZ5_UTILS_CONF_OPT += --enable-udev 
--        BLUEZ5_UTILS_DEPENDENCIES += udev 
--else 
--        BLUEZ5_UTILS_CONF_OPT += --disable-udev 
--endif 
-- 
--# integrate with systemd if available 
--ifeq ($(BR2_PACKAGE_SYSTEMD),y) 
--        BLUEZ5_UTILS_CONF_OPT += --enable-systemd 
--        BLUEZ5_UTILS_DEPENDENCIES += systemd 
--else 
--        BLUEZ5_UTILS_CONF_OPT += --disable-systemd 
--endif 
-- 
--$(eval $(autotools-package))
-diff -rupN buildroot-2014.02/package/bluez5_utils/Config.in buildroot-2014.02.orig/package/bluez5_utils/Config.in
---- buildroot-2014.02/package/bluez5_utils/Config.in	2014-07-12 13:49:40.091915402 +0100
-+++ buildroot-2014.02.orig/package/bluez5_utils/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,54 +0,0 @@
--config BR2_PACKAGE_BLUEZ5_UTILS 
--	bool "bluez-utils 5.x" 
--	depends on !BR2_avr32 
--	depends on BR2_USE_WCHAR # libglib2 
--	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, libglib2 
--	depends on BR2_USE_MMU # dbus 
--	depends on !BR2_PACKAGE_BLUEZ_UTILS # conflicts with 4.x version 
--	select BR2_PACKAGE_DBUS 
--	select BR2_PACKAGE_LIBGLIB2 
--	select BR2_PACKAGE_LIBICAL 
--	select BR2_PACKAGE_READLINE 
--	help 
--	  bluez utils version 5.x 
-- 
--	  With this release BlueZ only supports the new Bluetooth Management 
--	  kernel interface (introduced in Linux 3.4). 
--	  For Low Energy support at least kernel version 3.5 is needed. 
-- 
--	  The API is not backwards compatible with BlueZ 4. 
-- 
--	  Bluez utils will use systemd and/or udev if enabled. 
-- 
--	  http://www.bluez.org
--	  http://www.kernel.org/pub/linux/bluetooth
-- 
--if BR2_PACKAGE_BLUEZ5_UTILS 
-- 
--config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL 
--	bool "build experimental plugins" 
--	help 
--	  Build BlueZ 5.x experimental plugins (SAP, NFC, ...). 
-- 
--config BR2_PACKAGE_BLUEZ5_UTILS_TEST 
--	bool "enable test" 
--	help 
--	  Enable test. 
-- 
--config BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL 
--	bool "install GATT tool" 
--	help 
--	  Generic Attribute Profile (GATT) support. This provides profile 
--	  discovery and description services for Bluetooth Low Energy. 
--	  This will install the gatttool utility. 
-- 
--	  It is always build with BlueZ 5.x, but upstream choose not to install 
--	  it by default. 
-- 
--endif 
-- 
--comment "bluez5-utils needs a toolchain w/ wchar, threads" 
--	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS 
-- 
--comment "bluez5-utils conflicts with older bluez-utils version" 
--	depends on BR2_PACKAGE_BLUEZ_UTILS 
-diff -rupN buildroot-2014.02/package/Config.in buildroot-2014.02.orig/package/Config.in
---- buildroot-2014.02/package/Config.in	2014-07-12 13:49:20.047355596 +0100
-+++ buildroot-2014.02.orig/package/Config.in	2014-02-27 20:51:23.000000000 +0000
-@@ -2,12 +2,6 @@ menu "Target packages"
+diff -rupN buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk
+--- buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk	2014-07-12 13:49:40.095915528 +0100
+@@ -0,0 +1,59 @@
++################################################################################ 
++# 
++# bluez5_utils 
++# 
++################################################################################ 
++ 
++BLUEZ5_UTILS_VERSION = 5.17
++BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
++BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
++BLUEZ5_UTILS_INSTALL_STAGING = YES
++BLUEZ5_UTILS_DEPENDENCIES = dbus libglib2 libical readline
++BLUEZ5_UTILS_CONF_OPT = --enable-tools --enable-library --enable-sixaxis 
++BLUEZ5_UTILS_LICENSE = GPLv2+ LGPLv2.1+
++BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
++
++# experimental plugins
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL),y)
++	BLUEZ5_UTILS_CONF_OPT += --enable-experimental
++else
++	BLUEZ5_UTILS_CONF_OPT += --disable-experimental
++endif
++ 
++# install gatttool (For some reason upstream choose not to do it by default) 
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL),y)
++define BLUEZ5_UTILS_INSTALL_GATTTOOL 
++	$(INSTALL) -D -m 0755 $(@D)/attrib/gatttool $(TARGET_DIR)/usr/bin 
++endef 
++BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_GATTTOOL 
++endif 
++
++define BLUEZ5_UTILS_INSTALL
++	$(LIBTOOL) --finish /usr/lib/bluetooth/plugins
++	$(LIBTOOL) --finish /usr/lib
++endef
++ 
++# enable test 
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_TEST),y) 
++	BLUEZ5_UTILS_CONF_OPT += --enable-test 
++else 
++	BLUEZ5_UTILS_CONF_OPT += --disable-test 
++endif 
++ 
++# use udev if available 
++ifeq ($(BR2_PACKAGE_UDEV),y) 
++        BLUEZ5_UTILS_CONF_OPT += --enable-udev 
++        BLUEZ5_UTILS_DEPENDENCIES += udev 
++else 
++        BLUEZ5_UTILS_CONF_OPT += --disable-udev 
++endif 
++ 
++# integrate with systemd if available 
++ifeq ($(BR2_PACKAGE_SYSTEMD),y) 
++        BLUEZ5_UTILS_CONF_OPT += --enable-systemd 
++        BLUEZ5_UTILS_DEPENDENCIES += systemd 
++else 
++        BLUEZ5_UTILS_CONF_OPT += --disable-systemd 
++endif 
++ 
++$(eval $(autotools-package))
+diff -rupN buildroot-2014.02.orig/package/bluez5_utils/Config.in buildroot-2014.02/package/bluez5_utils/Config.in
+--- buildroot-2014.02.orig/package/bluez5_utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/bluez5_utils/Config.in	2014-07-12 13:49:40.091915402 +0100
+@@ -0,0 +1,54 @@
++config BR2_PACKAGE_BLUEZ5_UTILS 
++	bool "bluez-utils 5.x" 
++	depends on !BR2_avr32 
++	depends on BR2_USE_WCHAR # libglib2 
++	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, libglib2 
++	depends on BR2_USE_MMU # dbus 
++	depends on !BR2_PACKAGE_BLUEZ_UTILS # conflicts with 4.x version 
++	select BR2_PACKAGE_DBUS 
++	select BR2_PACKAGE_LIBGLIB2 
++	select BR2_PACKAGE_LIBICAL 
++	select BR2_PACKAGE_READLINE 
++	help 
++	  bluez utils version 5.x 
++ 
++	  With this release BlueZ only supports the new Bluetooth Management 
++	  kernel interface (introduced in Linux 3.4). 
++	  For Low Energy support at least kernel version 3.5 is needed. 
++ 
++	  The API is not backwards compatible with BlueZ 4. 
++ 
++	  Bluez utils will use systemd and/or udev if enabled. 
++ 
++	  http://www.bluez.org
++	  http://www.kernel.org/pub/linux/bluetooth
++ 
++if BR2_PACKAGE_BLUEZ5_UTILS 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL 
++	bool "build experimental plugins" 
++	help 
++	  Build BlueZ 5.x experimental plugins (SAP, NFC, ...). 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_TEST 
++	bool "enable test" 
++	help 
++	  Enable test. 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL 
++	bool "install GATT tool" 
++	help 
++	  Generic Attribute Profile (GATT) support. This provides profile 
++	  discovery and description services for Bluetooth Low Energy. 
++	  This will install the gatttool utility. 
++ 
++	  It is always build with BlueZ 5.x, but upstream choose not to install 
++	  it by default. 
++ 
++endif 
++ 
++comment "bluez5-utils needs a toolchain w/ wchar, threads" 
++	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS 
++ 
++comment "bluez5-utils conflicts with older bluez-utils version" 
++	depends on BR2_PACKAGE_BLUEZ_UTILS 
+diff -rupN buildroot-2014.02.orig/package/Config.in buildroot-2014.02/package/Config.in
+--- buildroot-2014.02.orig/package/Config.in	2014-02-27 20:51:23.000000000 +0000
++++ buildroot-2014.02/package/Config.in	2014-07-12 13:49:20.047355596 +0100
+@@ -2,6 +2,12 @@ menu "Target packages"
  
  source "package/busybox/Config.in"
  
--menu "Rpicopter"
--source "package/libnih/Config.in"
--source "package/upstart/Config.in"
--source "package/rpicopter/Config.in"
--endmenu
--
++menu "Rpicopter"
++source "package/libnih/Config.in"
++source "package/upstart/Config.in"
++source "package/rpicopter/Config.in"
++endmenu
++
  menu "Audio and video applications"
  source "package/alsa-utils/Config.in"
  source "package/aumix/Config.in"
-@@ -819,7 +813,6 @@ source "package/avahi/Config.in"
+@@ -813,6 +819,7 @@ source "package/avahi/Config.in"
  source "package/axel/Config.in"
  source "package/bcusdk/Config.in"
  source "package/bind/Config.in"
--source "package/bluez5_utils/Config.in"
++source "package/bluez5_utils/Config.in"
  source "package/bluez_utils/Config.in"
  source "package/bmon/Config.in"
  source "package/boa/Config.in"
-diff -rupN buildroot-2014.02/package/dbus/dbus.mk buildroot-2014.02.orig/package/dbus/dbus.mk
---- buildroot-2014.02/package/dbus/dbus.mk	2014-07-12 13:49:37.851852839 +0100
-+++ buildroot-2014.02.orig/package/dbus/dbus.mk	2014-02-27 20:51:23.000000000 +0000
+diff -rupN buildroot-2014.02.orig/package/dbus/dbus.mk buildroot-2014.02/package/dbus/dbus.mk
+--- buildroot-2014.02.orig/package/dbus/dbus.mk	2014-02-27 20:51:23.000000000 +0000
++++ buildroot-2014.02/package/dbus/dbus.mk	2014-07-12 13:49:37.851852839 +0100
 @@ -4,7 +4,7 @@
  #
  ################################################################################
  
--DBUS_VERSION = 1.6.8
-+DBUS_VERSION = 1.4.26
+-DBUS_VERSION = 1.4.26
++DBUS_VERSION = 1.6.8
  DBUS_SITE = http://dbus.freedesktop.org/releases/dbus
  DBUS_LICENSE = AFLv2.1 GPLv2+
  DBUS_LICENSE_FILES = COPYING
-@@ -30,10 +30,6 @@ DBUS_CONF_OPT = --with-dbus-user=dbus \
+@@ -30,6 +30,10 @@ DBUS_CONF_OPT = --with-dbus-user=dbus \
  		--with-system-socket=/var/run/dbus/system_bus_socket \
  		--with-system-pid-file=/var/run/messagebus.pid
  
--define DBUS_USERS 
--	dbus -1 dbus -1 * /var/run/dbus - dbus DBus messagebus user 
--endef
--
++define DBUS_USERS 
++	dbus -1 dbus -1 * /var/run/dbus - dbus DBus messagebus user 
++endef
++
  ifeq ($(BR2_PREFER_STATIC_LIB),y)
  DBUS_CONF_OPT += LIBS='-lpthread'
  endif
-diff -rupN buildroot-2014.02/package/libnih/Config.in buildroot-2014.02.orig/package/libnih/Config.in
---- buildroot-2014.02/package/libnih/Config.in	2014-07-12 13:49:30.391644487 +0100
-+++ buildroot-2014.02.orig/package/libnih/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,9 +0,0 @@
--config BR2_PACKAGE_LIBNIH
--    bool "libnih"
--    select BR2_PACKAGE_DBUS
--    select BR2_PACKAGE_EXPAT
--    select BR2_PACKAGE_PKGCONF
--    help
--        libnih is a small library for C application development
--        containing functions that, despite its name, are not 
--        implemented elsewhere in the standard library set.
-diff -rupN buildroot-2014.02/package/libnih/libnih.mk buildroot-2014.02.orig/package/libnih/libnih.mk
---- buildroot-2014.02/package/libnih/libnih.mk	2014-07-12 13:49:30.399644709 +0100
-+++ buildroot-2014.02.orig/package/libnih/libnih.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,26 +0,0 @@
--LIBNIH_VERSION = 1.0.3
--LIBNIH_SITE = https://launchpad.net/libnih/1.0/$(LIBNIH_VERSION)/+download
--LIBNIH_SOURCE = libnih-$(LIBNIH_VERSION).tar.gz
--HOST_LIBNIH_DEPENDENCIES = host-dbus host-expat
--LIBNIH_DEPENDENCIES = dbus expat pkgconf host-libnih
--LIBNIH_INSTALL_STAGING = YES
--
--HOST_LIBNIH_AUTORECONF = YES
--
--define HOST_LIBNIH_CONFIG_CMDS
--	(cd $(@D) && rm -rf config.cache; \
--	        $(HOST_CONFIGURE_OPTS) \
--		CFLAGS="$(HOST_CFLAGS)" \
--		LDFLAGS="$(HOST_LDFLAGS)" \
--		./configure \
--		--prefix="$(HOST_DIR)/usr" \
--		--sysconfdir="$(HOST_DIR)/etc" \
--	)
--endef
--
--LIBNIH_AUTORECONF = YES
--
--LIBNIH_CONF_OPT += NIH_DBUS_TOOL=$(HOST_DIR)/usr/bin/nih-dbus-tool
--
--$(eval $(autotools-package))
--$(eval $(host-autotools-package))
-diff -rupN buildroot-2014.02/package/rpicopter/Config.in buildroot-2014.02.orig/package/rpicopter/Config.in
---- buildroot-2014.02/package/rpicopter/Config.in	2014-07-12 13:49:22.071412121 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,15 +0,0 @@
--config BR2_PACKAGE_RPICOPTER
--	bool "rpicopter"
--	help
--	  Adds rpicopter utils package
--	  https://github.com/rpicopter 
--
--if BR2_PACKAGE_RPICOPTER
--source "package/rpicopter/rpic-controller/Config.in"
--source "package/rpicopter/rpic-avrcontroller/Config.in"
--source "package/rpicopter/rpic-bluez-tools/Config.in"
--source "package/rpicopter/rpic-utils/Config.in"
--source "package/rpicopter/rpic-pigpio/Config.in"
--source "package/rpicopter/rpic-servoblaster/Config.in"
--source "package/rpicopter/rpic-qtsixa/Config.in"
--endif
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in	2014-07-12 13:49:22.159414565 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,5 +0,0 @@
--config BR2_PACKAGE_RPIC_AVRCONTROLLER
--	bool "rpic-avrcontroller"
--	help
--	  Adds avr controller package
--	  https://github.com/rpicopter/avrcontroller
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk
---- buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	2014-07-12 13:49:22.175415009 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,22 +0,0 @@
--#############################################################
--#
--# rpic-avrcontroller 
--#
--#############################################################
--RPIC_AVRCONTROLLER_VERSION = master
--RPIC_AVRCONTROLLER_SITE_METHOD = git
--RPIC_AVRCONTROLLER_REPO_URL = https://github.com/rpicopter/avrcontroller.git
--RPIC_AVRCONTROLLER_SITE = $(call qstrip,$(RPIC_AVRCONTROLLER_REPO_URL))
--#PIGPIO_INSTALL_STAGING = YES
--
--#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
--
--define RPIC_AVRCONTROLLER_BUILD_CMDS
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
--endef
--
--define RPIC_AVRCONTROLLER_INSTALL_TARGET_CMDS
--	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in	2014-07-12 13:49:22.111413231 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,7 +0,0 @@
--config BR2_PACKAGE_RPIC_BLUEZ_TOOLS
--    bool "rpic-bluez-tools"
--    depends on BR2_PACKAGE_DBUS_GLIB
--    depends on BR2_PACKAGE_READLINE
--    help
--        bluez-tools
--        https://github.com/rpicopter/bluez-tools
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk
---- buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	2014-07-12 13:49:22.107413115 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,13 +0,0 @@
--#############################################################
--#
--# rpic-bluez-tools 
--#
--#############################################################
--RPIC_BLUEZ_TOOLS_VERSION = master
--RPIC_BLUEZ_TOOLS_SITE_METHOD = git
--RPIC_BLUEZ_TOOLS_REPO_URL = https://github.com/rpicopter/bluez-tools.git
--RPIC_BLUEZ_TOOLS_SITE = $(call qstrip,$(RPIC_BLUEZ_TOOLS_REPO_URL))
--RPIC_BLUEZ_TOOLS_INSTALL_TARGET = YES
--RPIC_BLUEZ_TOOLS_AUTORECONF = YES
--
--$(eval $(autotools-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-controller/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-controller/Config.in	2014-07-12 13:49:22.115413332 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,5 +0,0 @@
--config BR2_PACKAGE_RPIC_CONTROLLER
--	bool "rpic-controller"
--	help
--	  Adds controller package
--	  https://github.com/rpicopter/controller
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk
---- buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk	2014-07-12 13:49:22.139414018 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,22 +0,0 @@
--#############################################################
--#
--# rpic-controller 
--#
--#############################################################
--RPIC_CONTROLLER_VERSION = master
--RPIC_CONTROLLER_SITE_METHOD = git
--RPIC_CONTROLLER_REPO_URL = https://github.com/rpicopter/controller.git
--RPIC_CONTROLLER_SITE = $(call qstrip,$(RPIC_CONTROLLER_REPO_URL))
--#PIGPIO_INSTALL_STAGING = YES
--
--#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
--
--define RPIC_CONTROLLER_BUILD_CMDS
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
--endef
--
--define RPIC_CONTROLLER_INSTALL_TARGET_CMDS
--	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpicopter.mk buildroot-2014.02.orig/package/rpicopter/rpicopter.mk
---- buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-07-12 13:49:22.199415685 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1 +0,0 @@
--include package/rpicopter/*/*.mk
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-07-12 13:49:22.087412554 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,5 +0,0 @@
--config BR2_PACKAGE_RPIC_PIGPIO
--	bool "rpic-pigpio"
--	help
--	  Adds pigpio package
--	  https://github.com/rpicopter/pigpio
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
---- buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-07-12 13:49:22.099412901 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,34 +0,0 @@
--#############################################################
--#
--# rpic-pigpio 
--#
--#############################################################
--#RPIC_PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
--RPIC_PIGPIO_VERSION = master
--RPIC_PIGPIO_SITE_METHOD = git
--RPIC_PIGPIO_REPO_URL = https://github.com/rpicopter/pigpio.git
--RPIC_PIGPIO_SITE = $(call qstrip,$(RPIC_PIGPIO_REPO_URL))
--#PIGPIO_INSTALL_STAGING = YES
--
--#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
--
--define RPIC_PIGPIO_BUILD_CMDS
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
--endef
--
--define RPIC_PIGPIO_INSTALL_TARGET_CMDS
--	$(INSTALL) -D -m 0755 -d              $(TARGET_DIR)/opt/pigpio/cgi
--	$(INSTALL)  -m 0755 -d              $(TARGET_DIR)/usr/local/include
--	$(INSTALL)  -m 0644 $(@D)/pigpio.h        $(TARGET_DIR)/usr/local/include
--	$(INSTALL) -m 0644 $(@D)/pigpiod_if.h    $(TARGET_DIR)/usr/local/include
--	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/lib
--	$(INSTALL) -m 0644 $(@D)/libpigpio.a     $(TARGET_DIR)/usr/local/lib
--	$(INSTALL) -m 0644 $(@D)/libpigpiod_if.a $(TARGET_DIR)/usr/local/lib
--	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
--	$(INSTALL) -m 0755 $(@D)/pig2vcd         $(TARGET_DIR)/usr/local/bin
--	$(INSTALL)  -m 0755 $(@D)/pigpiod        $(TARGET_DIR)/usr/local/bin
--	$(INSTALL)  -m 0755 $(@D)/pigs           $(TARGET_DIR)/usr/local/bin
--
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-07-12 13:49:22.175415009 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,6 +0,0 @@
--config BR2_PACKAGE_RPIC_QTSIXA
--	bool "rpic-qtsixa"
--	depends on BR2_PACKAGE_LIBUSB_COMPAT
--	help
--	  Adds support for PS3 SixAxis controller
--	  https://github.com/rpicopter/QtSixA 
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
---- buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-07-12 13:49:22.191415483 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,44 +0,0 @@
--#############################################################
--#
--# rpic-qtsixa
--#
--#############################################################
--#QTSIXA_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
--RPIC_QTSIXA_VERSION = master
--RPIC_QTSIXA_SITE_METHOD = git
--RPIC_QTSIXA_REPO_URL = https://github.com/rpicopter/QtSixA.git
--RPIC_QTSIXA_SITE = $(call qstrip,$(RPIC_QTSIXA_REPO_URL))
--
--define RPIC_QTSIXA_BUILD_CMDS
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/sixad
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils
--endef
--
--define RPIC_QTSIXA_INSTALL_TARGET_CMDS
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/bin
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/sbin
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/default
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/init.d
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/logrotate.d
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad/profiles
--
--	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/default/sixad
--	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/init.d/sixad
--	$(INSTALL) -m 644 $(@D)/sixad/sixad.log $(TARGET_DIR)/etc/logrotate.d/sixad
--	$(INSTALL) -m 755 $(@D)/sixad/sixad $(TARGET_DIR)/usr/bin/
--	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-bin $(TARGET_DIR)/usr/sbin/
--	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-sixaxis $(TARGET_DIR)/usr/sbin/
--	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-remote $(TARGET_DIR)/usr/sbin/
--	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-3in1 $(TARGET_DIR)/usr/sbin/
--	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-raw $(TARGET_DIR)/usr/sbin/
--	$(INSTALL) -m 755 $(@D)/sixad/sixad-dbus-blocker $(TARGET_DIR)/usr/sbin/
--	@chmod 777 -R $(TARGET_DIR)/var/lib/sixad/
--
--
--	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair $(TARGET_DIR)/usr/local/bin/
--	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair-kbd $(TARGET_DIR)/usr/local/bin/
--	$(INSTALL) -m 755 $(@D)/utils/bins/hidraw-dump $(TARGET_DIR)/usr/local/bin/
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-07-12 13:49:22.203415792 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,5 +0,0 @@
--config BR2_PACKAGE_RPIC_SERVOBLASTER
--	bool "rpic-servoblaster"
--	help
--	  Adds servoblaster
--	  https://github.com/rpicopter/ServoBlaster
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
---- buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-07-12 13:49:22.203415792 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,21 +0,0 @@
--#############################################################
--#
--# rpic-servoblaster
--#
--#############################################################
--#SERVOBLASTER_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
--RPIC_SERVOBLASTER_VERSION = master
--RPIC_SERVOBLASTER_SITE_METHOD = git
--RPIC_SERVOBLASTER_REPO_URL = https://github.com/rpicopter/servoblaster.git
--RPIC_SERVOBLASTER_SITE = $(call qstrip,$(RPIC_SERVOBLASTER_REPO_URL))
--
--define RPIC_SERVOBLASTER_BUILD_CMDS
-- $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/user all
--endef
--
--define RPIC_SERVOBLASTER_INSTALL_TARGET_CMDS
--       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
--       $(INSTALL) -m 0755 $(@D)/user/servod         $(TARGET_DIR)/usr/local/bin
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-utils/Config.in buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in
---- buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-07-12 13:49:22.115413332 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,7 +0,0 @@
--config BR2_PACKAGE_RPIC_UTILS
--	bool "rpic-utils"
--#	select BR2_PACKAGE_BLUEZ_UTILS_COMPAT
--#	select BR2_PACKAGE_UDEV
--	help
--	  Adds utils package
--	  https://github.com/rpicopter/utils
-diff -rupN buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk
---- buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-07-12 13:49:22.115413332 +0100
-+++ buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,58 +0,0 @@
--#############################################################
--#
--# rpic-utils 
--#
--#############################################################
--RPIC_UTILS_VERSION = master
--RPIC_UTILS_SITE_METHOD = git
--RPIC_UTILS_REPO_URL = https://github.com/rpicopter/utils.git
--RPIC_UTILS_SITE = $(call qstrip,$(RPIC_UTILS_REPO_URL))
--#PIGPIO_INSTALL_STAGING = YES
--
--#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
--
--define RPIC_UTILS_BUILD_CMDS
--endef
--
--
--define RPIC_UTILS_INSTALL_TARGET_CMDS
--	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
--endef 
--
--define RPIC_UTILS_INSTALL_TARGET_CMDS_OLD
--	install -d $(TARGET_DIR)/etc
--	install -d $(TARGET_DIR)/etc/init.d
--	install -d $(TARGET_DIR)/etc/init.d/manual
--	install -d $(TARGET_DIR)/etc/udev/rules.d
--	install -d $(TARGET_DIR)/usr/local
--	install -d $(TARGET_DIR)/usr/local/bin
--	install -d $(TARGET_DIR)/etc/bluetooth
--	install -d $(TARGET_DIR)/etc/dropbear
--	install -d $(TARGET_DIR)/avr
--	install -m 644 $(@D)/root/etc/group $(TARGET_DIR)/etc/group
--	install -m 644 $(@D)/root/etc/exports $(TARGET_DIR)/etc/exports
--	install -m 644 $(@D)/root/etc/bluetooth/main.conf $(TARGET_DIR)/etc/bluetooth/main.conf
--	install -m 644 $(@D)/root/etc/bluetooth/network.conf $(TARGET_DIR)/etc/bluetooth/network.conf
--	install -m 644 $(@D)/root/etc/bluetooth/pin $(TARGET_DIR)/etc/bluetooth/pin
--	install -m 644 $(@D)/root/etc/udev/rules.d/91-btremove.rules $(TARGET_DIR)/etc/udev/rules.d/91-btremove.rules
--	install -m 644 $(@D)/root/etc/udev/rules.d/91-btadd.rules $(TARGET_DIR)/etc/udev/rules.d/91-btadd.rules
--	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetadd.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetadd.rules
--	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetremove.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetremove.rules
--	install -m 755 $(@D)/root/etc/init.d/S09dbus $(TARGET_DIR)/etc/init.d/S09dbus
--	install -m 755 $(@D)/root/etc/init.d/S90i2c $(TARGET_DIR)/etc/init.d/S90i2c
--	install -m 755 $(@D)/root/etc/init.d/S98ps3controller $(TARGET_DIR)/etc/init.d/S98ps3controller
--	install -m 755 $(@D)/root/etc/init.d/S99controller $(TARGET_DIR)/etc/init.d/S99controller
--	install -m 755 $(@D)/root/usr/local/bin/udevrun.sh $(TARGET_DIR)/usr/local/bin/udevrun.sh
--	install -m 755 $(@D)/root/usr/local/bin/sixpair.sh $(TARGET_DIR)/usr/local/bin/sixpair.sh
--	install -m 755 $(@D)/root/usr/local/bin/btnetstart.sh $(TARGET_DIR)/usr/local/bin/btnetstart.sh
--	install -m 755 $(@D)/root/usr/local/bin/btnetstop.sh $(TARGET_DIR)/usr/local/bin/btnetstop.sh
--	install -m 755 $(@D)/root/usr/local/bin/btstart.sh $(TARGET_DIR)/usr/local/bin/btstart.sh
--	install -m 755 $(@D)/root/usr/local/bin/btstop.sh $(TARGET_DIR)/usr/local/bin/btstop.sh
--	install -m 755 $(@D)/root/usr/local/bin/controller.sh $(TARGET_DIR)/usr/local/bin/controller.sh
--	install -m 755 $(@D)/root/usr/local/bin/avr.sh $(TARGET_DIR)/usr/local/bin/avr.sh
--	mkdir -p $(TARGET_DIR)/etc/dropbear
--	mkdir -p $(TARGET_DIR)/var/local
--	mkdir -p $(TARGET_DIR)/avr
--endef
--
--$(eval $(generic-package))
-diff -rupN buildroot-2014.02/package/upstart/Config.in buildroot-2014.02.orig/package/upstart/Config.in
---- buildroot-2014.02/package/upstart/Config.in	2014-07-12 13:49:18.871322757 +0100
-+++ buildroot-2014.02.orig/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
-@@ -1,13 +0,0 @@
--config BR2_PACKAGE_UPSTART
--	bool "upstart"
--	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV
--	depends on BR2_INET_IPV6
--	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
--	select BR2_PACKAGE_DBUS
--	select BR2_PACKAGE_LIBNIH
--	select BR2_PACKAGE_JSON_C
--	help
--		Upstart is an event-based replacement for the /sbin/init
--		daemon which handles starting of tasks and services
--		during boot, stopping them during shutdown and supervising 
--		them while the system is running.
-diff -rupN buildroot-2014.02/package/upstart/network.conf buildroot-2014.02.orig/package/upstart/network.conf
---- buildroot-2014.02/package/upstart/network.conf	2014-07-12 13:49:18.883323056 +0100
-+++ buildroot-2014.02.orig/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
-@@ -1,15 +0,0 @@
--# networking
--##
--
--description "starts the network"
--
--start on runlevel [2345]
--stop on runlevel [!2345]
--
--pre-start script
--	/sbin/ifup -a
--end script
--
--post-stop script
--	/sbin/ifdown -a
--end script
-diff -rupN buildroot-2014.02/package/upstart/upstart.mk buildroot-2014.02.orig/package/upstart/upstart.mk
---- buildroot-2014.02/package/upstart/upstart.mk	2014-07-12 13:49:18.883323056 +0100
-+++ buildroot-2014.02.orig/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
-@@ -1,22 +0,0 @@
--UPSTART_VERSION = 1.12.1
--UPSTART_SITE = http://upstart.ubuntu.com/download/$(UPSTART_VERSION)
--UPSTART_SOURCE = upstart-$(UPSTART_VERSION).tar.gz
--UPSTART_INSTALL_STAGING = YES
--UPSTART_DEPENDENCIES = udev dbus libnih json-c
--UPSTART_POST_INSTALL_TARGET_HOOKS += UPSTART_REPLACE_INITSCRIPTS
--
--UPSTART_AUTORECONF = YES
--
--UPSTART_CONF_OPT += --exec-prefix=/
--
--define UPSTART_REPLACE_INITSCRIPTS
--	#replace sysinitv scripts with upstart ones
--	rm -f $(TARGET_DIR)/etc/init.d/S20urandom
--	rm -f $(TARGET_DIR)/etc/init.d/S40network
--	$(INSTALL) -m 0644 package/upstart/urandom.conf \
--		$(TARGET_DIR)/etc/init
--	$(INSTALL) -m 0644 package/upstart/network.conf \
--		$(TARGET_DIR)/etc/init
--endef
--
--$(eval $(autotools-package))
-diff -rupN buildroot-2014.02/package/upstart/urandom.conf buildroot-2014.02.orig/package/upstart/urandom.conf
---- buildroot-2014.02/package/upstart/urandom.conf	2014-07-12 13:49:18.859322379 +0100
-+++ buildroot-2014.02.orig/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
-@@ -1,22 +0,0 @@
--# urandom
--##
--
--description "saves the random seed between reboots"
--
--start on runlevel [2345]
--stop on runlevel [!2345]
--
--pre-start script
--	if [ -f /etc/random-seed ]
--	then
--		cat /etc/random-seed >/dev/urandom
--	fi
--	rm -f /etc/random-seed
--	dd if=/dev/urandom of=/etc/random-seed count=1 \
--		>/dev/null 2>&1
--end script
--
--post-stop script
--	dd if=/dev/urandom of=/etc/random-seed count=1 \
--		>/dev/null 2>&1
--end script
+diff -rupN buildroot-2014.02.orig/package/libnih/Config.in buildroot-2014.02/package/libnih/Config.in
+--- buildroot-2014.02.orig/package/libnih/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/libnih/Config.in	2014-07-12 13:49:30.391644487 +0100
+@@ -0,0 +1,9 @@
++config BR2_PACKAGE_LIBNIH
++    bool "libnih"
++    select BR2_PACKAGE_DBUS
++    select BR2_PACKAGE_EXPAT
++    select BR2_PACKAGE_PKGCONF
++    help
++        libnih is a small library for C application development
++        containing functions that, despite its name, are not 
++        implemented elsewhere in the standard library set.
+diff -rupN buildroot-2014.02.orig/package/libnih/libnih.mk buildroot-2014.02/package/libnih/libnih.mk
+--- buildroot-2014.02.orig/package/libnih/libnih.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/libnih/libnih.mk	2014-07-12 13:49:30.399644709 +0100
+@@ -0,0 +1,26 @@
++LIBNIH_VERSION = 1.0.3
++LIBNIH_SITE = https://launchpad.net/libnih/1.0/$(LIBNIH_VERSION)/+download
++LIBNIH_SOURCE = libnih-$(LIBNIH_VERSION).tar.gz
++HOST_LIBNIH_DEPENDENCIES = host-dbus host-expat
++LIBNIH_DEPENDENCIES = dbus expat pkgconf host-libnih
++LIBNIH_INSTALL_STAGING = YES
++
++HOST_LIBNIH_AUTORECONF = YES
++
++define HOST_LIBNIH_CONFIG_CMDS
++	(cd $(@D) && rm -rf config.cache; \
++	        $(HOST_CONFIGURE_OPTS) \
++		CFLAGS="$(HOST_CFLAGS)" \
++		LDFLAGS="$(HOST_LDFLAGS)" \
++		./configure \
++		--prefix="$(HOST_DIR)/usr" \
++		--sysconfdir="$(HOST_DIR)/etc" \
++	)
++endef
++
++LIBNIH_AUTORECONF = YES
++
++LIBNIH_CONF_OPT += NIH_DBUS_TOOL=$(HOST_DIR)/usr/bin/nih-dbus-tool
++
++$(eval $(autotools-package))
++$(eval $(host-autotools-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/Config.in buildroot-2014.02/package/rpicopter/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/Config.in	2014-07-12 13:49:22.071412121 +0100
+@@ -0,0 +1,15 @@
++config BR2_PACKAGE_RPICOPTER
++	bool "rpicopter"
++	help
++	  Adds rpicopter utils package
++	  https://github.com/rpicopter 
++
++if BR2_PACKAGE_RPICOPTER
++source "package/rpicopter/rpic-controller/Config.in"
++source "package/rpicopter/rpic-avrcontroller/Config.in"
++source "package/rpicopter/rpic-bluez-tools/Config.in"
++source "package/rpicopter/rpic-utils/Config.in"
++source "package/rpicopter/rpic-pigpio/Config.in"
++source "package/rpicopter/rpic-servoblaster/Config.in"
++source "package/rpicopter/rpic-qtsixa/Config.in"
++endif
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in	2014-07-12 13:49:22.159414565 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_AVRCONTROLLER
++	bool "rpic-avrcontroller"
++	help
++	  Adds avr controller package
++	  https://github.com/rpicopter/avrcontroller
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	2014-07-12 13:49:22.175415009 +0100
+@@ -0,0 +1,22 @@
++#############################################################
++#
++# rpic-avrcontroller 
++#
++#############################################################
++RPIC_AVRCONTROLLER_VERSION = master
++RPIC_AVRCONTROLLER_SITE_METHOD = git
++RPIC_AVRCONTROLLER_REPO_URL = https://github.com/rpicopter/avrcontroller.git
++RPIC_AVRCONTROLLER_SITE = $(call qstrip,$(RPIC_AVRCONTROLLER_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_AVRCONTROLLER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define RPIC_AVRCONTROLLER_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in	2014-07-12 13:49:22.111413231 +0100
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_RPIC_BLUEZ_TOOLS
++    bool "rpic-bluez-tools"
++    depends on BR2_PACKAGE_DBUS_GLIB
++    depends on BR2_PACKAGE_READLINE
++    help
++        bluez-tools
++        https://github.com/rpicopter/bluez-tools
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	2014-07-12 13:49:22.107413115 +0100
+@@ -0,0 +1,13 @@
++#############################################################
++#
++# rpic-bluez-tools 
++#
++#############################################################
++RPIC_BLUEZ_TOOLS_VERSION = master
++RPIC_BLUEZ_TOOLS_SITE_METHOD = git
++RPIC_BLUEZ_TOOLS_REPO_URL = https://github.com/rpicopter/bluez-tools.git
++RPIC_BLUEZ_TOOLS_SITE = $(call qstrip,$(RPIC_BLUEZ_TOOLS_REPO_URL))
++RPIC_BLUEZ_TOOLS_INSTALL_TARGET = YES
++RPIC_BLUEZ_TOOLS_AUTORECONF = YES
++
++$(eval $(autotools-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in buildroot-2014.02/package/rpicopter/rpic-controller/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-controller/Config.in	2014-07-12 13:49:22.115413332 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_CONTROLLER
++	bool "rpic-controller"
++	help
++	  Adds controller package
++	  https://github.com/rpicopter/controller
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk	2014-07-12 13:49:22.139414018 +0100
+@@ -0,0 +1,22 @@
++#############################################################
++#
++# rpic-controller 
++#
++#############################################################
++RPIC_CONTROLLER_VERSION = master
++RPIC_CONTROLLER_SITE_METHOD = git
++RPIC_CONTROLLER_REPO_URL = https://github.com/rpicopter/controller.git
++RPIC_CONTROLLER_SITE = $(call qstrip,$(RPIC_CONTROLLER_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_CONTROLLER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define RPIC_CONTROLLER_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpicopter.mk buildroot-2014.02/package/rpicopter/rpicopter.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-07-12 13:49:22.199415685 +0100
+@@ -0,0 +1 @@
++include package/rpicopter/*/*.mk
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-07-12 13:49:22.087412554 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_PIGPIO
++	bool "rpic-pigpio"
++	help
++	  Adds pigpio package
++	  https://github.com/rpicopter/pigpio
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-07-12 13:49:22.099412901 +0100
+@@ -0,0 +1,34 @@
++#############################################################
++#
++# rpic-pigpio 
++#
++#############################################################
++#RPIC_PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
++RPIC_PIGPIO_VERSION = master
++RPIC_PIGPIO_SITE_METHOD = git
++RPIC_PIGPIO_REPO_URL = https://github.com/rpicopter/pigpio.git
++RPIC_PIGPIO_SITE = $(call qstrip,$(RPIC_PIGPIO_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_PIGPIO_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define RPIC_PIGPIO_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 -d              $(TARGET_DIR)/opt/pigpio/cgi
++	$(INSTALL)  -m 0755 -d              $(TARGET_DIR)/usr/local/include
++	$(INSTALL)  -m 0644 $(@D)/pigpio.h        $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0644 $(@D)/pigpiod_if.h    $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpio.a     $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpiod_if.a $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++	$(INSTALL) -m 0755 $(@D)/pig2vcd         $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigpiod        $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigs           $(TARGET_DIR)/usr/local/bin
++
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-07-12 13:49:22.175415009 +0100
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_RPIC_QTSIXA
++	bool "rpic-qtsixa"
++	depends on BR2_PACKAGE_LIBUSB_COMPAT
++	help
++	  Adds support for PS3 SixAxis controller
++	  https://github.com/rpicopter/QtSixA 
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-07-12 13:49:22.191415483 +0100
+@@ -0,0 +1,44 @@
++#############################################################
++#
++# rpic-qtsixa
++#
++#############################################################
++#QTSIXA_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++RPIC_QTSIXA_VERSION = master
++RPIC_QTSIXA_SITE_METHOD = git
++RPIC_QTSIXA_REPO_URL = https://github.com/rpicopter/QtSixA.git
++RPIC_QTSIXA_SITE = $(call qstrip,$(RPIC_QTSIXA_REPO_URL))
++
++define RPIC_QTSIXA_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/sixad
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils
++endef
++
++define RPIC_QTSIXA_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/bin
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/sbin
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/default
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/init.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/logrotate.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad/profiles
++
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/default/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/init.d/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.log $(TARGET_DIR)/etc/logrotate.d/sixad
++	$(INSTALL) -m 755 $(@D)/sixad/sixad $(TARGET_DIR)/usr/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-bin $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-sixaxis $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-remote $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-3in1 $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-raw $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/sixad-dbus-blocker $(TARGET_DIR)/usr/sbin/
++	@chmod 777 -R $(TARGET_DIR)/var/lib/sixad/
++
++
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair-kbd $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/hidraw-dump $(TARGET_DIR)/usr/local/bin/
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-07-12 13:49:22.203415792 +0100
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_SERVOBLASTER
++	bool "rpic-servoblaster"
++	help
++	  Adds servoblaster
++	  https://github.com/rpicopter/ServoBlaster
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-07-12 13:49:22.203415792 +0100
+@@ -0,0 +1,21 @@
++#############################################################
++#
++# rpic-servoblaster
++#
++#############################################################
++#SERVOBLASTER_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++RPIC_SERVOBLASTER_VERSION = master
++RPIC_SERVOBLASTER_SITE_METHOD = git
++RPIC_SERVOBLASTER_REPO_URL = https://github.com/rpicopter/servoblaster.git
++RPIC_SERVOBLASTER_SITE = $(call qstrip,$(RPIC_SERVOBLASTER_REPO_URL))
++
++define RPIC_SERVOBLASTER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/user all
++endef
++
++define RPIC_SERVOBLASTER_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++       $(INSTALL) -m 0755 $(@D)/user/servod         $(TARGET_DIR)/usr/local/bin
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in buildroot-2014.02/package/rpicopter/rpic-utils/Config.in
+--- buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-07-12 13:49:22.115413332 +0100
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_RPIC_UTILS
++	bool "rpic-utils"
++#	select BR2_PACKAGE_BLUEZ_UTILS_COMPAT
++#	select BR2_PACKAGE_UDEV
++	help
++	  Adds utils package
++	  https://github.com/rpicopter/utils
+diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
+--- buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-07-12 13:49:22.115413332 +0100
+@@ -0,0 +1,58 @@
++#############################################################
++#
++# rpic-utils 
++#
++#############################################################
++RPIC_UTILS_VERSION = master
++RPIC_UTILS_SITE_METHOD = git
++RPIC_UTILS_REPO_URL = https://github.com/rpicopter/utils.git
++RPIC_UTILS_SITE = $(call qstrip,$(RPIC_UTILS_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_UTILS_BUILD_CMDS
++endef
++
++
++define RPIC_UTILS_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef 
++
++define RPIC_UTILS_INSTALL_TARGET_CMDS_OLD
++	install -d $(TARGET_DIR)/etc
++	install -d $(TARGET_DIR)/etc/init.d
++	install -d $(TARGET_DIR)/etc/init.d/manual
++	install -d $(TARGET_DIR)/etc/udev/rules.d
++	install -d $(TARGET_DIR)/usr/local
++	install -d $(TARGET_DIR)/usr/local/bin
++	install -d $(TARGET_DIR)/etc/bluetooth
++	install -d $(TARGET_DIR)/etc/dropbear
++	install -d $(TARGET_DIR)/avr
++	install -m 644 $(@D)/root/etc/group $(TARGET_DIR)/etc/group
++	install -m 644 $(@D)/root/etc/exports $(TARGET_DIR)/etc/exports
++	install -m 644 $(@D)/root/etc/bluetooth/main.conf $(TARGET_DIR)/etc/bluetooth/main.conf
++	install -m 644 $(@D)/root/etc/bluetooth/network.conf $(TARGET_DIR)/etc/bluetooth/network.conf
++	install -m 644 $(@D)/root/etc/bluetooth/pin $(TARGET_DIR)/etc/bluetooth/pin
++	install -m 644 $(@D)/root/etc/udev/rules.d/91-btremove.rules $(TARGET_DIR)/etc/udev/rules.d/91-btremove.rules
++	install -m 644 $(@D)/root/etc/udev/rules.d/91-btadd.rules $(TARGET_DIR)/etc/udev/rules.d/91-btadd.rules
++	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetadd.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetadd.rules
++	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetremove.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetremove.rules
++	install -m 755 $(@D)/root/etc/init.d/S09dbus $(TARGET_DIR)/etc/init.d/S09dbus
++	install -m 755 $(@D)/root/etc/init.d/S90i2c $(TARGET_DIR)/etc/init.d/S90i2c
++	install -m 755 $(@D)/root/etc/init.d/S98ps3controller $(TARGET_DIR)/etc/init.d/S98ps3controller
++	install -m 755 $(@D)/root/etc/init.d/S99controller $(TARGET_DIR)/etc/init.d/S99controller
++	install -m 755 $(@D)/root/usr/local/bin/udevrun.sh $(TARGET_DIR)/usr/local/bin/udevrun.sh
++	install -m 755 $(@D)/root/usr/local/bin/sixpair.sh $(TARGET_DIR)/usr/local/bin/sixpair.sh
++	install -m 755 $(@D)/root/usr/local/bin/btnetstart.sh $(TARGET_DIR)/usr/local/bin/btnetstart.sh
++	install -m 755 $(@D)/root/usr/local/bin/btnetstop.sh $(TARGET_DIR)/usr/local/bin/btnetstop.sh
++	install -m 755 $(@D)/root/usr/local/bin/btstart.sh $(TARGET_DIR)/usr/local/bin/btstart.sh
++	install -m 755 $(@D)/root/usr/local/bin/btstop.sh $(TARGET_DIR)/usr/local/bin/btstop.sh
++	install -m 755 $(@D)/root/usr/local/bin/controller.sh $(TARGET_DIR)/usr/local/bin/controller.sh
++	install -m 755 $(@D)/root/usr/local/bin/avr.sh $(TARGET_DIR)/usr/local/bin/avr.sh
++	mkdir -p $(TARGET_DIR)/etc/dropbear
++	mkdir -p $(TARGET_DIR)/var/local
++	mkdir -p $(TARGET_DIR)/avr
++endef
++
++$(eval $(generic-package))
+diff -rupN buildroot-2014.02.orig/package/upstart/Config.in buildroot-2014.02/package/upstart/Config.in
+--- buildroot-2014.02.orig/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/Config.in	2014-07-12 13:49:18.871322757 +0100
+@@ -0,0 +1,13 @@
++config BR2_PACKAGE_UPSTART
++	bool "upstart"
++	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV
++	depends on BR2_INET_IPV6
++	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
++	select BR2_PACKAGE_DBUS
++	select BR2_PACKAGE_LIBNIH
++	select BR2_PACKAGE_JSON_C
++	help
++		Upstart is an event-based replacement for the /sbin/init
++		daemon which handles starting of tasks and services
++		during boot, stopping them during shutdown and supervising 
++		them while the system is running.
+diff -rupN buildroot-2014.02.orig/package/upstart/network.conf buildroot-2014.02/package/upstart/network.conf
+--- buildroot-2014.02.orig/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/network.conf	2014-07-12 13:49:18.883323056 +0100
+@@ -0,0 +1,15 @@
++# networking
++##
++
++description "starts the network"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	/sbin/ifup -a
++end script
++
++post-stop script
++	/sbin/ifdown -a
++end script
+diff -rupN buildroot-2014.02.orig/package/upstart/upstart.mk buildroot-2014.02/package/upstart/upstart.mk
+--- buildroot-2014.02.orig/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/upstart.mk	2014-07-12 13:49:18.883323056 +0100
+@@ -0,0 +1,22 @@
++UPSTART_VERSION = 1.12.1
++UPSTART_SITE = http://upstart.ubuntu.com/download/$(UPSTART_VERSION)
++UPSTART_SOURCE = upstart-$(UPSTART_VERSION).tar.gz
++UPSTART_INSTALL_STAGING = YES
++UPSTART_DEPENDENCIES = udev dbus libnih json-c
++UPSTART_POST_INSTALL_TARGET_HOOKS += UPSTART_REPLACE_INITSCRIPTS
++
++UPSTART_AUTORECONF = YES
++
++UPSTART_CONF_OPT += --exec-prefix=/
++
++define UPSTART_REPLACE_INITSCRIPTS
++	#replace sysinitv scripts with upstart ones
++	rm -f $(TARGET_DIR)/etc/init.d/S20urandom
++	rm -f $(TARGET_DIR)/etc/init.d/S40network
++	$(INSTALL) -m 0644 package/upstart/urandom.conf \
++		$(TARGET_DIR)/etc/init
++	$(INSTALL) -m 0644 package/upstart/network.conf \
++		$(TARGET_DIR)/etc/init
++endef
++
++$(eval $(autotools-package))
+diff -rupN buildroot-2014.02.orig/package/upstart/urandom.conf buildroot-2014.02/package/upstart/urandom.conf
+--- buildroot-2014.02.orig/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.02/package/upstart/urandom.conf	2014-07-12 13:49:18.859322379 +0100
+@@ -0,0 +1,22 @@
++# urandom
++##
++
++description "saves the random seed between reboots"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	if [ -f /etc/random-seed ]
++	then
++		cat /etc/random-seed >/dev/urandom
++	fi
++	rm -f /etc/random-seed
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script
++
++post-stop script
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script
