@@ -1,7 +1,8 @@
 #!/bin/sh
 
-DISKSIZE=87040000 #bytes - should be divideable by sector size (512) 
-FS1_SIZE=8704000 #bytes - should be divideable by sector size (512)
+DISKSIZE=122880000 
+#DISKSIZE=87040000 #bytes - should be divideable by sector size (512) 
+FS1_SIZE=10240000 #bytes - should be divideable by sector size (512)
 
 
 BR_IMAGE_DIR=$1
@@ -11,19 +12,22 @@ DISKSIZE_SECTORS=$(( $DISKSIZE / $SECTORSIZE ));
 FS1_SIZE_SECTORS=$(( $FS1_SIZE / $SECTORSIZE ));
 FS1_START_SECTOR=2048
 FS2_START_SECTOR=$(( $FS1_START_SECTOR + $FS1_SIZE_SECTORS + 1 ));
+FS2_START_SECTOR=22528
 
 rm rpicopter.img
 echo "Preparing image..."
 dd if=/dev/zero of=rpicopter.img count=$DISKSIZE_SECTORS
 echo "- stage 1/6" 
 
-(echo n; echo p; echo 1; echo ; echo +$FS1_SIZE_SECTORS; echo t; echo b; echo n; echo p; echo ; echo ; echo ; echo t; echo 2; echo 83; echo w) | fdisk -u rpicopter.img > /dev/null 
+(echo n; echo p; echo 1; echo ; echo "+$FS1_SIZE_SECTORS"; echo t; echo b; echo n; echo p; echo ; echo ; echo ; echo t; echo 2; echo 83; echo w) | fdisk -u rpicopter.img > /dev/null 
 echo "- stage 2/6" 
 
 sudo losetup --offset $(( $SECTORSIZE * $FS1_START_SECTOR)) --sizelimit $FS1_SIZE /dev/loop0 rpicopter.img
+echo "Offset 1: $(( $SECTORSIZE * $FS1_START_SECTOR ))"
 sudo mkdosfs /dev/loop0
 sudo losetup -d /dev/loop0
 sudo losetup --offset $(( $SECTORSIZE * $FS2_START_SECTOR ))  /dev/loop0 rpicopter.img
+echo "Offset 2: $(( $SECTORSIZE * $FS2_START_SECTOR ))"
 sudo mkfs.ext2 /dev/loop0
 sudo losetup -d /dev/loop0
 echo "- stage 3/6"
