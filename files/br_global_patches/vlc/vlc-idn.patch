@@ -1,0 +1,74 @@
+diff -Naur vlc-2.1.2-old/modules/stream_out/standard.c vlc-2.1.2-new/modules/stream_out/standard.c
+--- vlc-2.1.2-old/modules/stream_out/standard.c   2013-06-24 11:00:38.000000000 -0700
++++ vlc-2.1.2-new/modules/stream_out/standard.c   2014-01-22 17:01:54.000000000 -0800
+@@ -157,7 +157,7 @@
+         .ai_family = AF_UNSPEC,
+         .ai_socktype = SOCK_DGRAM,
+         .ai_protocol = 0,
+-        .ai_flags = AI_NUMERICHOST | AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_NUMERICHOST | AI_NUMERICSERV,
+     };
+     char *shost = var_GetNonEmptyString (p_access, "src-addr");
+     char *dhost = var_GetNonEmptyString (p_access, "dst-addr");
+diff -Naur vlc-2.1.2-old/src/network/io.c vlc-2.1.2-new/src/network/io.c
+--- vlc-2.1.2-old/src/network/io.c   2013-12-03 01:12:35.000000000 -0800
++++ vlc-2.1.2-new/src/network/io.c   2014-01-22 16:56:48.000000000 -0800
+@@ -134,7 +134,7 @@
+     struct addrinfo hints = {
+         .ai_socktype = type,
+         .ai_protocol = protocol,
+-        .ai_flags = AI_PASSIVE | AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_PASSIVE | AI_NUMERICSERV,
+     }, *res;
+ 
+     msg_Dbg (p_this, "net: listening to %s port %d",
+diff -Naur vlc-2.1.2-old/src/network/tcp.c vlc-2.1.2-new/src/network/tcp.c
+--- vlc-2.1.2-old/src/network/tcp.c   2013-09-12 08:18:34.000000000 -0700
++++ vlc-2.1.2-new/src/network/tcp.c   2014-01-22 17:00:06.000000000 -0800
+@@ -134,7 +134,7 @@
+     struct addrinfo hints = {
+         .ai_socktype = type,
+         .ai_protocol = proto,
+-        .ai_flags = AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_NUMERICSERV,
+     }, *res;
+ 
+     int val = vlc_getaddrinfo (psz_realhost, i_realport, &hints, &res);
+@@ -451,7 +451,6 @@
+             .ai_family = AF_INET,
+             .ai_socktype = SOCK_STREAM,
+             .ai_protocol = IPPROTO_TCP,
+-            .ai_flags = AI_IDN,
+         };
+         struct addrinfo *res;
+ 
+diff -Naur vlc-2.1.2-old/src/network/udp.c vlc-2.1.2-new/src/network/udp.c
+--- vlc-2.1.2-old/src/network/udp.c   2013-09-12 08:18:34.000000000 -0700
++++ vlc-2.1.2-new/src/network/udp.c   2014-01-22 17:01:09.000000000 -0800
+@@ -135,7 +135,7 @@
+     struct addrinfo hints = {
+         .ai_socktype = SOCK_DGRAM,
+         .ai_protocol = protocol,
+-        .ai_flags = AI_PASSIVE | AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_PASSIVE | AI_NUMERICSERV,
+     }, *res;
+ 
+     if (host && !*host)
+@@ -502,7 +502,7 @@
+     struct addrinfo hints = {
+         .ai_socktype = SOCK_DGRAM,
+         .ai_protocol = proto,
+-        .ai_flags = AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_NUMERICSERV,
+     }, *res;
+     int       i_handle = -1;
+     bool      b_unreach = false;
+@@ -597,7 +597,7 @@
+     struct addrinfo hints = {
+         .ai_socktype = SOCK_DGRAM,
+         .ai_protocol = protocol,
+-        .ai_flags = AI_NUMERICSERV | AI_IDN,
++        .ai_flags = AI_NUMERICSERV,
+     }, *loc, *rem;
+ 
+     int val = vlc_getaddrinfo (psz_server, i_server, &hints, &rem);

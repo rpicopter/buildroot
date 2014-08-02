@@ -42,8 +42,11 @@ echo "- stage 4/6"
 sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
 sudo cp $MY_PATH/configs/rpi_boot_config.txt tmp/fs1/config.txt
 sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
+sudo cp $MY_PATH/configs/start.elf tmp/fs1/start.elf
+sudo cp $MY_PATH/configs/fixup.dat tmp/fs1/fixup.dat
 sudo cp $MY_PATH/configs/start_x.elf tmp/fs1/start_x.elf
 sudo cp $MY_PATH/configs/fixup_x.dat tmp/fs1/fixup_x.dat
+sudo cp $MY_PATH/configs/bootcode.bin tmp/fs1/bootcode.bin
 sudo cp $BR_IMAGE_DIR/zImage tmp/fs1
 sudo tar xf $BR_IMAGE_DIR/rootfs.tar -C tmp/fs2
 

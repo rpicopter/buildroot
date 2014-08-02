@@ -10,7 +10,8 @@ over_voltage=2
 
 kernel=zImage
 disable_overscan=1
-gpu_mem_512=32
+gpu_mem_256=128
+gpu_mem_512=256
 
 start_file=start_x.elf
 fixup_file=fixup_x.dat
