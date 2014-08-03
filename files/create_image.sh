@@ -2,7 +2,8 @@
 
 DISKSIZE=122880000 
 #DISKSIZE=87040000 #bytes - should be divideable by sector size (512) 
-FS1_SIZE=10240000 #bytes - should be divideable by sector size (512)
+#FS1_SIZE=10240000 #bytes - should be divideable by sector size (512)
+FS1_SIZE=15360000
 
 
 BR_IMAGE_DIR=$1
@@ -13,6 +14,7 @@ FS1_SIZE_SECTORS=$(( $FS1_SIZE / $SECTORSIZE ));
 FS1_START_SECTOR=2048
 FS2_START_SECTOR=$(( $FS1_START_SECTOR + $FS1_SIZE_SECTORS + 1 ));
 FS2_START_SECTOR=22528
+FS2_START_SECTOR=32768
 
 rm rpicopter.img
 echo "Preparing image..."
@@ -39,7 +41,7 @@ sudo mount -o loop,rw,offset=$(( $FS1_START_SECTOR * $SECTORSIZE )) rpicopter.im
 sudo mount -o loop,rw,offset=$(( $FS2_START_SECTOR * $SECTORSIZE )) rpicopter.img tmp/fs2
 echo "- stage 4/6"
 
-sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
+#sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
 sudo cp $MY_PATH/configs/rpi_boot_config.txt tmp/fs1/config.txt
 sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
 sudo cp $MY_PATH/configs/start.elf tmp/fs1/start.elf
