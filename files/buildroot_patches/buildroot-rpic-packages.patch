@@ -1,6 +1,6 @@
-diff -rupN buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk
---- buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/bluez5_utils/bluez5_utils.mk	2014-07-12 13:49:40.095915528 +0100
+diff -rupN buildroot-2014.05-orig/package/bluez5_utils/bluez5_utils.mk buildroot-2014.05/package/bluez5_utils/bluez5_utils.mk
+--- buildroot-2014.05-orig/package/bluez5_utils/bluez5_utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/bluez5_utils/bluez5_utils.mk	2014-08-04 10:38:17.010603989 +0100
 @@ -0,0 +1,59 @@
 +################################################################################ 
 +# 
@@ -61,9 +61,9 @@ diff -rupN buildroot-2014.02.orig/package/bluez5_utils/bluez5_utils.mk buildroot
 +endif 
 + 
 +$(eval $(autotools-package))
-diff -rupN buildroot-2014.02.orig/package/bluez5_utils/Config.in buildroot-2014.02/package/bluez5_utils/Config.in
---- buildroot-2014.02.orig/package/bluez5_utils/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/bluez5_utils/Config.in	2014-07-12 13:49:40.091915402 +0100
+diff -rupN buildroot-2014.05-orig/package/bluez5_utils/Config.in buildroot-2014.05/package/bluez5_utils/Config.in
+--- buildroot-2014.05-orig/package/bluez5_utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/bluez5_utils/Config.in	2014-08-04 10:38:17.010603989 +0100
 @@ -0,0 +1,54 @@
 +config BR2_PACKAGE_BLUEZ5_UTILS 
 +	bool "bluez-utils 5.x" 
@@ -119,9 +119,9 @@ diff -rupN buildroot-2014.02.orig/package/bluez5_utils/Config.in buildroot-2014.
 + 
 +comment "bluez5-utils conflicts with older bluez-utils version" 
 +	depends on BR2_PACKAGE_BLUEZ_UTILS 
-diff -rupN buildroot-2014.02.orig/package/Config.in buildroot-2014.02/package/Config.in
---- buildroot-2014.02.orig/package/Config.in	2014-02-27 20:51:23.000000000 +0000
-+++ buildroot-2014.02/package/Config.in	2014-07-12 13:49:20.047355596 +0100
+diff -rupN buildroot-2014.05-orig/package/Config.in buildroot-2014.05/package/Config.in
+--- buildroot-2014.05-orig/package/Config.in	2014-05-31 08:52:49.000000000 +0100
++++ buildroot-2014.05/package/Config.in	2014-08-04 10:38:17.214705989 +0100
 @@ -2,6 +2,12 @@ menu "Target packages"
  
  source "package/busybox/Config.in"
@@ -135,7 +135,7 @@ diff -rupN buildroot-2014.02.orig/package/Config.in buildroot-2014.02/package/Co
  menu "Audio and video applications"
  source "package/alsa-utils/Config.in"
  source "package/aumix/Config.in"
-@@ -813,6 +819,7 @@ source "package/avahi/Config.in"
+@@ -891,6 +897,7 @@ source "package/avahi/Config.in"
  source "package/axel/Config.in"
  source "package/bcusdk/Config.in"
  source "package/bind/Config.in"
@@ -143,32 +143,9 @@ diff -rupN buildroot-2014.02.orig/package/Config.in buildroot-2014.02/package/Co
  source "package/bluez_utils/Config.in"
  source "package/bmon/Config.in"
  source "package/boa/Config.in"
-diff -rupN buildroot-2014.02.orig/package/dbus/dbus.mk buildroot-2014.02/package/dbus/dbus.mk
---- buildroot-2014.02.orig/package/dbus/dbus.mk	2014-02-27 20:51:23.000000000 +0000
-+++ buildroot-2014.02/package/dbus/dbus.mk	2014-07-12 13:49:37.851852839 +0100
-@@ -4,7 +4,7 @@
- #
- ################################################################################
- 
--DBUS_VERSION = 1.4.26
-+DBUS_VERSION = 1.6.8
- DBUS_SITE = http://dbus.freedesktop.org/releases/dbus
- DBUS_LICENSE = AFLv2.1 GPLv2+
- DBUS_LICENSE_FILES = COPYING
-@@ -30,6 +30,10 @@ DBUS_CONF_OPT = --with-dbus-user=dbus \
- 		--with-system-socket=/var/run/dbus/system_bus_socket \
- 		--with-system-pid-file=/var/run/messagebus.pid
- 
-+define DBUS_USERS 
-+	dbus -1 dbus -1 * /var/run/dbus - dbus DBus messagebus user 
-+endef
-+
- ifeq ($(BR2_PREFER_STATIC_LIB),y)
- DBUS_CONF_OPT += LIBS='-lpthread'
- endif
-diff -rupN buildroot-2014.02.orig/package/libnih/Config.in buildroot-2014.02/package/libnih/Config.in
---- buildroot-2014.02.orig/package/libnih/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/libnih/Config.in	2014-07-12 13:49:30.391644487 +0100
+diff -rupN buildroot-2014.05-orig/package/libnih/Config.in buildroot-2014.05/package/libnih/Config.in
+--- buildroot-2014.05-orig/package/libnih/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/libnih/Config.in	2014-08-04 10:38:17.875035989 +0100
 @@ -0,0 +1,9 @@
 +config BR2_PACKAGE_LIBNIH
 +    bool "libnih"
@@ -179,9 +156,9 @@ diff -rupN buildroot-2014.02.orig/package/libnih/Config.in buildroot-2014.02/pac
 +        libnih is a small library for C application development
 +        containing functions that, despite its name, are not 
 +        implemented elsewhere in the standard library set.
-diff -rupN buildroot-2014.02.orig/package/libnih/libnih.mk buildroot-2014.02/package/libnih/libnih.mk
---- buildroot-2014.02.orig/package/libnih/libnih.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/libnih/libnih.mk	2014-07-12 13:49:30.399644709 +0100
+diff -rupN buildroot-2014.05-orig/package/libnih/libnih.mk buildroot-2014.05/package/libnih/libnih.mk
+--- buildroot-2014.05-orig/package/libnih/libnih.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/libnih/libnih.mk	2014-08-04 10:38:17.875035989 +0100
 @@ -0,0 +1,26 @@
 +LIBNIH_VERSION = 1.0.3
 +LIBNIH_SITE = https://launchpad.net/libnih/1.0/$(LIBNIH_VERSION)/+download
@@ -209,9 +186,9 @@ diff -rupN buildroot-2014.02.orig/package/libnih/libnih.mk buildroot-2014.02/pac
 +
 +$(eval $(autotools-package))
 +$(eval $(host-autotools-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/Config.in buildroot-2014.02/package/rpicopter/Config.in
---- buildroot-2014.02.orig/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/Config.in	2014-07-12 13:49:22.071412121 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/Config.in buildroot-2014.05/package/rpicopter/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/Config.in	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,15 @@
 +config BR2_PACKAGE_RPICOPTER
 +	bool "rpicopter"
@@ -228,18 +205,18 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/Config.in buildroot-2014.02/
 +source "package/rpicopter/rpic-servoblaster/Config.in"
 +source "package/rpicopter/rpic-qtsixa/Config.in"
 +endif
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-avrcontroller/Config.in	2014-07-12 13:49:22.159414565 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-avrcontroller/Config.in buildroot-2014.05/package/rpicopter/rpic-avrcontroller/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-avrcontroller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-avrcontroller/Config.in	2014-08-04 10:38:17.718957989 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_AVRCONTROLLER
 +	bool "rpic-avrcontroller"
 +	help
 +	  Adds avr controller package
 +	  https://github.com/rpicopter/avrcontroller
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	2014-07-12 13:49:22.175415009 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk buildroot-2014.05/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	2014-08-04 10:38:17.718957989 +0100
 @@ -0,0 +1,22 @@
 +#############################################################
 +#
@@ -263,9 +240,9 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-avrcontroller/rpic-avrc
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-bluez-tools/Config.in	2014-07-12 13:49:22.111413231 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-bluez-tools/Config.in buildroot-2014.05/package/rpicopter/rpic-bluez-tools/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-bluez-tools/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-bluez-tools/Config.in	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,7 @@
 +config BR2_PACKAGE_RPIC_BLUEZ_TOOLS
 +    bool "rpic-bluez-tools"
@@ -274,9 +251,9 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/Config.in b
 +    help
 +        bluez-tools
 +        https://github.com/rpicopter/bluez-tools
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	2014-07-12 13:49:22.107413115 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk buildroot-2014.05/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,13 @@
 +#############################################################
 +#
@@ -291,18 +268,18 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-bluez-tools/rpic-bluez-
 +RPIC_BLUEZ_TOOLS_AUTORECONF = YES
 +
 +$(eval $(autotools-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in buildroot-2014.02/package/rpicopter/rpic-controller/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-controller/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-controller/Config.in	2014-07-12 13:49:22.115413332 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-controller/Config.in buildroot-2014.05/package/rpicopter/rpic-controller/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-controller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-controller/Config.in	2014-08-04 10:38:17.718957989 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_CONTROLLER
 +	bool "rpic-controller"
 +	help
 +	  Adds controller package
 +	  https://github.com/rpicopter/controller
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-controller/rpic-controller.mk	2014-07-12 13:49:22.139414018 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-controller/rpic-controller.mk buildroot-2014.05/package/rpicopter/rpic-controller/rpic-controller.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-controller/rpic-controller.mk	2014-08-04 10:38:17.718957989 +0100
 @@ -0,0 +1,22 @@
 +#############################################################
 +#
@@ -326,23 +303,23 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-controller/rpic-control
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpicopter.mk buildroot-2014.02/package/rpicopter/rpicopter.mk
---- buildroot-2014.02.orig/package/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpicopter.mk	2014-07-12 13:49:22.199415685 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpicopter.mk buildroot-2014.05/package/rpicopter/rpicopter.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpicopter.mk	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1 @@
 +include package/rpicopter/*/*.mk
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-pigpio/Config.in	2014-07-12 13:49:22.087412554 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-pigpio/Config.in buildroot-2014.05/package/rpicopter/rpic-pigpio/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-pigpio/Config.in	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_PIGPIO
 +	bool "rpic-pigpio"
 +	help
 +	  Adds pigpio package
 +	  https://github.com/rpicopter/pigpio
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-07-12 13:49:22.099412901 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk buildroot-2014.05/package/rpicopter/rpic-pigpio/rpic-pigpio.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,34 @@
 +#############################################################
 +#
@@ -378,9 +355,9 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-pigpio/rpic-pigpio.mk b
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/Config.in	2014-07-12 13:49:22.175415009 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-qtsixa/Config.in buildroot-2014.05/package/rpicopter/rpic-qtsixa/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-qtsixa/Config.in	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,6 @@
 +config BR2_PACKAGE_RPIC_QTSIXA
 +	bool "rpic-qtsixa"
@@ -388,9 +365,9 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/Config.in buildr
 +	help
 +	  Adds support for PS3 SixAxis controller
 +	  https://github.com/rpicopter/QtSixA 
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-07-12 13:49:22.191415483 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk buildroot-2014.05/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,44 @@
 +#############################################################
 +#
@@ -436,18 +413,18 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk b
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/Config.in	2014-07-12 13:49:22.203415792 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-servoblaster/Config.in buildroot-2014.05/package/rpicopter/rpic-servoblaster/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-servoblaster/Config.in	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,5 @@
 +config BR2_PACKAGE_RPIC_SERVOBLASTER
 +	bool "rpic-servoblaster"
 +	help
 +	  Adds servoblaster
 +	  https://github.com/rpicopter/ServoBlaster
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-07-12 13:49:22.203415792 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk buildroot-2014.05/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-08-04 10:38:17.714955989 +0100
 @@ -0,0 +1,21 @@
 +#############################################################
 +#
@@ -470,9 +447,9 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-servoblaster/rpic-servo
 +endef
 +
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in buildroot-2014.02/package/rpicopter/rpic-utils/Config.in
---- buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-utils/Config.in	2014-07-12 13:49:22.115413332 +0100
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-utils/Config.in buildroot-2014.05/package/rpicopter/rpic-utils/Config.in
+--- buildroot-2014.05-orig/package/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-utils/Config.in	2014-08-04 10:38:17.718957989 +0100
 @@ -0,0 +1,7 @@
 +config BR2_PACKAGE_RPIC_UTILS
 +	bool "rpic-utils"
@@ -481,10 +458,10 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/Config.in buildro
 +	help
 +	  Adds utils package
 +	  https://github.com/rpicopter/utils
-diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk
---- buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/rpicopter/rpic-utils/rpic-utils.mk	2014-07-12 13:49:22.115413332 +0100
-@@ -0,0 +1,58 @@
+diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-utils/rpic-utils.mk buildroot-2014.05/package/rpicopter/rpic-utils/rpic-utils.mk
+--- buildroot-2014.05-orig/package/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/rpicopter/rpic-utils/rpic-utils.mk	2014-08-04 10:40:46.441281543 +0100
+@@ -0,0 +1,22 @@
 +#############################################################
 +#
 +# rpic-utils 
@@ -506,46 +483,22 @@ diff -rupN buildroot-2014.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk bui
 +	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
 +endef 
 +
-+define RPIC_UTILS_INSTALL_TARGET_CMDS_OLD
-+	install -d $(TARGET_DIR)/etc
-+	install -d $(TARGET_DIR)/etc/init.d
-+	install -d $(TARGET_DIR)/etc/init.d/manual
-+	install -d $(TARGET_DIR)/etc/udev/rules.d
-+	install -d $(TARGET_DIR)/usr/local
-+	install -d $(TARGET_DIR)/usr/local/bin
-+	install -d $(TARGET_DIR)/etc/bluetooth
-+	install -d $(TARGET_DIR)/etc/dropbear
-+	install -d $(TARGET_DIR)/avr
-+	install -m 644 $(@D)/root/etc/group $(TARGET_DIR)/etc/group
-+	install -m 644 $(@D)/root/etc/exports $(TARGET_DIR)/etc/exports
-+	install -m 644 $(@D)/root/etc/bluetooth/main.conf $(TARGET_DIR)/etc/bluetooth/main.conf
-+	install -m 644 $(@D)/root/etc/bluetooth/network.conf $(TARGET_DIR)/etc/bluetooth/network.conf
-+	install -m 644 $(@D)/root/etc/bluetooth/pin $(TARGET_DIR)/etc/bluetooth/pin
-+	install -m 644 $(@D)/root/etc/udev/rules.d/91-btremove.rules $(TARGET_DIR)/etc/udev/rules.d/91-btremove.rules
-+	install -m 644 $(@D)/root/etc/udev/rules.d/91-btadd.rules $(TARGET_DIR)/etc/udev/rules.d/91-btadd.rules
-+	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetadd.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetadd.rules
-+	install -m 644 $(@D)/root/etc/udev/rules.d/92-btnetremove.rules $(TARGET_DIR)/etc/udev/rules.d/92-btnetremove.rules
-+	install -m 755 $(@D)/root/etc/init.d/S09dbus $(TARGET_DIR)/etc/init.d/S09dbus
-+	install -m 755 $(@D)/root/etc/init.d/S90i2c $(TARGET_DIR)/etc/init.d/S90i2c
-+	install -m 755 $(@D)/root/etc/init.d/S98ps3controller $(TARGET_DIR)/etc/init.d/S98ps3controller
-+	install -m 755 $(@D)/root/etc/init.d/S99controller $(TARGET_DIR)/etc/init.d/S99controller
-+	install -m 755 $(@D)/root/usr/local/bin/udevrun.sh $(TARGET_DIR)/usr/local/bin/udevrun.sh
-+	install -m 755 $(@D)/root/usr/local/bin/sixpair.sh $(TARGET_DIR)/usr/local/bin/sixpair.sh
-+	install -m 755 $(@D)/root/usr/local/bin/btnetstart.sh $(TARGET_DIR)/usr/local/bin/btnetstart.sh
-+	install -m 755 $(@D)/root/usr/local/bin/btnetstop.sh $(TARGET_DIR)/usr/local/bin/btnetstop.sh
-+	install -m 755 $(@D)/root/usr/local/bin/btstart.sh $(TARGET_DIR)/usr/local/bin/btstart.sh
-+	install -m 755 $(@D)/root/usr/local/bin/btstop.sh $(TARGET_DIR)/usr/local/bin/btstop.sh
-+	install -m 755 $(@D)/root/usr/local/bin/controller.sh $(TARGET_DIR)/usr/local/bin/controller.sh
-+	install -m 755 $(@D)/root/usr/local/bin/avr.sh $(TARGET_DIR)/usr/local/bin/avr.sh
-+	mkdir -p $(TARGET_DIR)/etc/dropbear
-+	mkdir -p $(TARGET_DIR)/var/local
-+	mkdir -p $(TARGET_DIR)/avr
-+endef
-+
 +$(eval $(generic-package))
-diff -rupN buildroot-2014.02.orig/package/upstart/Config.in buildroot-2014.02/package/upstart/Config.in
---- buildroot-2014.02.orig/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/upstart/Config.in	2014-07-12 13:49:18.871322757 +0100
+diff -rupN buildroot-2014.05-orig/package/rpi-firmware/rpi-firmware.mk buildroot-2014.05/package/rpi-firmware/rpi-firmware.mk
+--- buildroot-2014.05-orig/package/rpi-firmware/rpi-firmware.mk	2014-05-31 08:52:49.000000000 +0100
++++ buildroot-2014.05/package/rpi-firmware/rpi-firmware.mk	2014-08-04 10:38:17.134665989 +0100
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-RPI_FIRMWARE_VERSION = c8881991d9181779aee9637d6f4b215f108021a3
++RPI_FIRMWARE_VERSION = 16ebc76904699b036f709beb65ee5ff70f83190b 
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3c
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
+diff -rupN buildroot-2014.05-orig/package/upstart/Config.in buildroot-2014.05/package/upstart/Config.in
+--- buildroot-2014.05-orig/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/Config.in	2014-08-04 10:38:17.310753989 +0100
 @@ -0,0 +1,13 @@
 +config BR2_PACKAGE_UPSTART
 +	bool "upstart"
@@ -560,9 +513,9 @@ diff -rupN buildroot-2014.02.orig/package/upstart/Config.in buildroot-2014.02/pa
 +		daemon which handles starting of tasks and services
 +		during boot, stopping them during shutdown and supervising 
 +		them while the system is running.
-diff -rupN buildroot-2014.02.orig/package/upstart/network.conf buildroot-2014.02/package/upstart/network.conf
---- buildroot-2014.02.orig/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/upstart/network.conf	2014-07-12 13:49:18.883323056 +0100
+diff -rupN buildroot-2014.05-orig/package/upstart/network.conf buildroot-2014.05/package/upstart/network.conf
+--- buildroot-2014.05-orig/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/network.conf	2014-08-04 10:38:17.310753989 +0100
 @@ -0,0 +1,15 @@
 +# networking
 +##
@@ -579,9 +532,9 @@ diff -rupN buildroot-2014.02.orig/package/upstart/network.conf buildroot-2014.02
 +post-stop script
 +	/sbin/ifdown -a
 +end script
-diff -rupN buildroot-2014.02.orig/package/upstart/upstart.mk buildroot-2014.02/package/upstart/upstart.mk
---- buildroot-2014.02.orig/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/upstart/upstart.mk	2014-07-12 13:49:18.883323056 +0100
+diff -rupN buildroot-2014.05-orig/package/upstart/upstart.mk buildroot-2014.05/package/upstart/upstart.mk
+--- buildroot-2014.05-orig/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/upstart.mk	2014-08-04 10:38:17.310753989 +0100
 @@ -0,0 +1,22 @@
 +UPSTART_VERSION = 1.12.1
 +UPSTART_SITE = http://upstart.ubuntu.com/download/$(UPSTART_VERSION)
@@ -605,9 +558,9 @@ diff -rupN buildroot-2014.02.orig/package/upstart/upstart.mk buildroot-2014.02/p
 +endef
 +
 +$(eval $(autotools-package))
-diff -rupN buildroot-2014.02.orig/package/upstart/urandom.conf buildroot-2014.02/package/upstart/urandom.conf
---- buildroot-2014.02.orig/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
-+++ buildroot-2014.02/package/upstart/urandom.conf	2014-07-12 13:49:18.859322379 +0100
+diff -rupN buildroot-2014.05-orig/package/upstart/urandom.conf buildroot-2014.05/package/upstart/urandom.conf
+--- buildroot-2014.05-orig/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/urandom.conf	2014-08-04 10:38:17.306751989 +0100
 @@ -0,0 +1,22 @@
 +# urandom
 +##
