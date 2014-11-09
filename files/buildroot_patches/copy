@@ -1,3 +1,191 @@
+diff -rupN buildroot-2014.05-orig/package/bluez5_utils/bluez5_utils.mk buildroot-2014.05/package/bluez5_utils/bluez5_utils.mk
+--- buildroot-2014.05-orig/package/bluez5_utils/bluez5_utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/bluez5_utils/bluez5_utils.mk	2014-08-04 10:38:17.010603989 +0100
+@@ -0,0 +1,59 @@
++################################################################################ 
++# 
++# bluez5_utils 
++# 
++################################################################################ 
++ 
++BLUEZ5_UTILS_VERSION = 5.17
++BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
++BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
++BLUEZ5_UTILS_INSTALL_STAGING = YES
++BLUEZ5_UTILS_DEPENDENCIES = dbus libglib2 libical readline
++BLUEZ5_UTILS_CONF_OPT = --enable-tools --enable-library --enable-sixaxis 
++BLUEZ5_UTILS_LICENSE = GPLv2+ LGPLv2.1+
++BLUEZ5_UTILS_LICENSE_FILES = COPYING COPYING.LIB
++
++# experimental plugins
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL),y)
++	BLUEZ5_UTILS_CONF_OPT += --enable-experimental
++else
++	BLUEZ5_UTILS_CONF_OPT += --disable-experimental
++endif
++ 
++# install gatttool (For some reason upstream choose not to do it by default) 
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL),y)
++define BLUEZ5_UTILS_INSTALL_GATTTOOL 
++	$(INSTALL) -D -m 0755 $(@D)/attrib/gatttool $(TARGET_DIR)/usr/bin 
++endef 
++BLUEZ5_UTILS_POST_INSTALL_TARGET_HOOKS += BLUEZ5_UTILS_INSTALL_GATTTOOL 
++endif 
++
++define BLUEZ5_UTILS_INSTALL
++	$(LIBTOOL) --finish /usr/lib/bluetooth/plugins
++	$(LIBTOOL) --finish /usr/lib
++endef
++ 
++# enable test 
++ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_TEST),y) 
++	BLUEZ5_UTILS_CONF_OPT += --enable-test 
++else 
++	BLUEZ5_UTILS_CONF_OPT += --disable-test 
++endif 
++ 
++# use udev if available 
++ifeq ($(BR2_PACKAGE_UDEV),y) 
++        BLUEZ5_UTILS_CONF_OPT += --enable-udev 
++        BLUEZ5_UTILS_DEPENDENCIES += udev 
++else 
++        BLUEZ5_UTILS_CONF_OPT += --disable-udev 
++endif 
++ 
++# integrate with systemd if available 
++ifeq ($(BR2_PACKAGE_SYSTEMD),y) 
++        BLUEZ5_UTILS_CONF_OPT += --enable-systemd 
++        BLUEZ5_UTILS_DEPENDENCIES += systemd 
++else 
++        BLUEZ5_UTILS_CONF_OPT += --disable-systemd 
++endif 
++ 
++$(eval $(autotools-package))
+diff -rupN buildroot-2014.05-orig/package/bluez5_utils/Config.in buildroot-2014.05/package/bluez5_utils/Config.in
+--- buildroot-2014.05-orig/package/bluez5_utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/bluez5_utils/Config.in	2014-08-04 10:38:17.010603989 +0100
+@@ -0,0 +1,54 @@
++config BR2_PACKAGE_BLUEZ5_UTILS 
++	bool "bluez-utils 5.x" 
++	depends on !BR2_avr32 
++	depends on BR2_USE_WCHAR # libglib2 
++	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus, libglib2 
++	depends on BR2_USE_MMU # dbus 
++	depends on !BR2_PACKAGE_BLUEZ_UTILS # conflicts with 4.x version 
++	select BR2_PACKAGE_DBUS 
++	select BR2_PACKAGE_LIBGLIB2 
++	select BR2_PACKAGE_LIBICAL 
++	select BR2_PACKAGE_READLINE 
++	help 
++	  bluez utils version 5.x 
++ 
++	  With this release BlueZ only supports the new Bluetooth Management 
++	  kernel interface (introduced in Linux 3.4). 
++	  For Low Energy support at least kernel version 3.5 is needed. 
++ 
++	  The API is not backwards compatible with BlueZ 4. 
++ 
++	  Bluez utils will use systemd and/or udev if enabled. 
++ 
++	  http://www.bluez.org
++	  http://www.kernel.org/pub/linux/bluetooth
++ 
++if BR2_PACKAGE_BLUEZ5_UTILS 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_EXPERIMENTAL 
++	bool "build experimental plugins" 
++	help 
++	  Build BlueZ 5.x experimental plugins (SAP, NFC, ...). 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_TEST 
++	bool "enable test" 
++	help 
++	  Enable test. 
++ 
++config BR2_PACKAGE_BLUEZ5_UTILS_GATTTOOL 
++	bool "install GATT tool" 
++	help 
++	  Generic Attribute Profile (GATT) support. This provides profile 
++	  discovery and description services for Bluetooth Low Energy. 
++	  This will install the gatttool utility. 
++ 
++	  It is always build with BlueZ 5.x, but upstream choose not to install 
++	  it by default. 
++ 
++endif 
++ 
++comment "bluez5-utils needs a toolchain w/ wchar, threads" 
++	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS 
++ 
++comment "bluez5-utils conflicts with older bluez-utils version" 
++	depends on BR2_PACKAGE_BLUEZ_UTILS 
+diff -rupN buildroot-2014.05-orig/package/Config.in buildroot-2014.05/package/Config.in
+--- buildroot-2014.05-orig/package/Config.in	2014-05-31 08:52:49.000000000 +0100
++++ buildroot-2014.05/package/Config.in	2014-08-04 10:38:17.214705989 +0100
+@@ -2,6 +2,12 @@ menu "Target packages"
+ 
+ source "package/busybox/Config.in"
+ 
++menu "Rpicopter"
++source "package/libnih/Config.in"
++source "package/upstart/Config.in"
++source "package/rpicopter/Config.in"
++endmenu
++
+ menu "Audio and video applications"
+ source "package/alsa-utils/Config.in"
+ source "package/aumix/Config.in"
+@@ -891,6 +897,7 @@ source "package/avahi/Config.in"
+ source "package/axel/Config.in"
+ source "package/bcusdk/Config.in"
+ source "package/bind/Config.in"
++source "package/bluez5_utils/Config.in"
+ source "package/bluez_utils/Config.in"
+ source "package/bmon/Config.in"
+ source "package/boa/Config.in"
+diff -rupN buildroot-2014.05-orig/package/libnih/Config.in buildroot-2014.05/package/libnih/Config.in
+--- buildroot-2014.05-orig/package/libnih/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/libnih/Config.in	2014-08-04 10:38:17.875035989 +0100
+@@ -0,0 +1,9 @@
++config BR2_PACKAGE_LIBNIH
++    bool "libnih"
++    select BR2_PACKAGE_DBUS
++    select BR2_PACKAGE_EXPAT
++    select BR2_PACKAGE_PKGCONF
++    help
++        libnih is a small library for C application development
++        containing functions that, despite its name, are not 
++        implemented elsewhere in the standard library set.
+diff -rupN buildroot-2014.05-orig/package/libnih/libnih.mk buildroot-2014.05/package/libnih/libnih.mk
+--- buildroot-2014.05-orig/package/libnih/libnih.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/libnih/libnih.mk	2014-08-04 10:38:17.875035989 +0100
+@@ -0,0 +1,26 @@
++LIBNIH_VERSION = 1.0.3
++LIBNIH_SITE = https://launchpad.net/libnih/1.0/$(LIBNIH_VERSION)/+download
++LIBNIH_SOURCE = libnih-$(LIBNIH_VERSION).tar.gz
++HOST_LIBNIH_DEPENDENCIES = host-dbus host-expat
++LIBNIH_DEPENDENCIES = dbus expat pkgconf host-libnih
++LIBNIH_INSTALL_STAGING = YES
++
++HOST_LIBNIH_AUTORECONF = YES
++
++define HOST_LIBNIH_CONFIG_CMDS
++	(cd $(@D) && rm -rf config.cache; \
++	        $(HOST_CONFIGURE_OPTS) \
++		CFLAGS="$(HOST_CFLAGS)" \
++		LDFLAGS="$(HOST_LDFLAGS)" \
++		./configure \
++		--prefix="$(HOST_DIR)/usr" \
++		--sysconfdir="$(HOST_DIR)/etc" \
++	)
++endef
++
++LIBNIH_AUTORECONF = YES
++
++LIBNIH_CONF_OPT += NIH_DBUS_TOOL=$(HOST_DIR)/usr/bin/nih-dbus-tool
++
++$(eval $(autotools-package))
++$(eval $(host-autotools-package))
 diff -rupN buildroot-2014.05-orig/package/rpicopter/Config.in buildroot-2014.05/package/rpicopter/Config.in
 --- buildroot-2014.05-orig/package/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
 +++ buildroot-2014.05/package/rpicopter/Config.in	2014-08-04 10:38:17.714955989 +0100
@@ -296,3 +484,103 @@ diff -rupN buildroot-2014.05-orig/package/rpicopter/rpic-utils/rpic-utils.mk bui
 +endef 
 +
 +$(eval $(generic-package))
+diff -rupN buildroot-2014.05-orig/package/rpi-firmware/rpi-firmware.mk buildroot-2014.05/package/rpi-firmware/rpi-firmware.mk
+--- buildroot-2014.05-orig/package/rpi-firmware/rpi-firmware.mk	2014-05-31 08:52:49.000000000 +0100
++++ buildroot-2014.05/package/rpi-firmware/rpi-firmware.mk	2014-08-04 10:38:17.134665989 +0100
+@@ -4,7 +4,7 @@
+ #
+ ################################################################################
+ 
+-RPI_FIRMWARE_VERSION = c8881991d9181779aee9637d6f4b215f108021a3
++RPI_FIRMWARE_VERSION = 16ebc76904699b036f709beb65ee5ff70f83190b 
+ RPI_FIRMWARE_SITE = $(call github,raspberrypi,firmware,$(RPI_FIRMWARE_VERSION))
+ RPI_FIRMWARE_LICENSE = BSD-3c
+ RPI_FIRMWARE_LICENSE_FILES = boot/LICENCE.broadcom
+diff -rupN buildroot-2014.05-orig/package/upstart/Config.in buildroot-2014.05/package/upstart/Config.in
+--- buildroot-2014.05-orig/package/upstart/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/Config.in	2014-08-04 10:38:17.310753989 +0100
+@@ -0,0 +1,13 @@
++config BR2_PACKAGE_UPSTART
++	bool "upstart"
++	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_UDEV
++	depends on BR2_INET_IPV6
++	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
++	select BR2_PACKAGE_DBUS
++	select BR2_PACKAGE_LIBNIH
++	select BR2_PACKAGE_JSON_C
++	help
++		Upstart is an event-based replacement for the /sbin/init
++		daemon which handles starting of tasks and services
++		during boot, stopping them during shutdown and supervising 
++		them while the system is running.
+diff -rupN buildroot-2014.05-orig/package/upstart/network.conf buildroot-2014.05/package/upstart/network.conf
+--- buildroot-2014.05-orig/package/upstart/network.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/network.conf	2014-08-04 10:38:17.310753989 +0100
+@@ -0,0 +1,15 @@
++# networking
++##
++
++description "starts the network"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	/sbin/ifup -a
++end script
++
++post-stop script
++	/sbin/ifdown -a
++end script
+diff -rupN buildroot-2014.05-orig/package/upstart/upstart.mk buildroot-2014.05/package/upstart/upstart.mk
+--- buildroot-2014.05-orig/package/upstart/upstart.mk	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/upstart.mk	2014-08-04 10:38:17.310753989 +0100
+@@ -0,0 +1,22 @@
++UPSTART_VERSION = 1.12.1
++UPSTART_SITE = http://upstart.ubuntu.com/download/$(UPSTART_VERSION)
++UPSTART_SOURCE = upstart-$(UPSTART_VERSION).tar.gz
++UPSTART_INSTALL_STAGING = YES
++UPSTART_DEPENDENCIES = udev dbus libnih json-c
++UPSTART_POST_INSTALL_TARGET_HOOKS += UPSTART_REPLACE_INITSCRIPTS
++
++UPSTART_AUTORECONF = YES
++
++UPSTART_CONF_OPT += --exec-prefix=/
++
++define UPSTART_REPLACE_INITSCRIPTS
++	#replace sysinitv scripts with upstart ones
++	rm -f $(TARGET_DIR)/etc/init.d/S20urandom
++	rm -f $(TARGET_DIR)/etc/init.d/S40network
++	$(INSTALL) -m 0644 package/upstart/urandom.conf \
++		$(TARGET_DIR)/etc/init
++	$(INSTALL) -m 0644 package/upstart/network.conf \
++		$(TARGET_DIR)/etc/init
++endef
++
++$(eval $(autotools-package))
+diff -rupN buildroot-2014.05-orig/package/upstart/urandom.conf buildroot-2014.05/package/upstart/urandom.conf
+--- buildroot-2014.05-orig/package/upstart/urandom.conf	1970-01-01 01:00:00.000000000 +0100
++++ buildroot-2014.05/package/upstart/urandom.conf	2014-08-04 10:38:17.306751989 +0100
+@@ -0,0 +1,22 @@
++# urandom
++##
++
++description "saves the random seed between reboots"
++
++start on runlevel [2345]
++stop on runlevel [!2345]
++
++pre-start script
++	if [ -f /etc/random-seed ]
++	then
++		cat /etc/random-seed >/dev/urandom
++	fi
++	rm -f /etc/random-seed
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script
++
++post-stop script
++	dd if=/dev/urandom of=/etc/random-seed count=1 \
++		>/dev/null 2>&1
++end script

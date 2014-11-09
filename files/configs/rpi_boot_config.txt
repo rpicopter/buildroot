@@ -13,5 +13,5 @@ disable_overscan=1
 gpu_mem_256=128
 gpu_mem_512=256
 
-start_file=start_x.elf
-fixup_file=fixup_x.dat
+start_file=start.elf
+fixup_file=fixup.dat

@@ -1,3 +1,25 @@
+CHANGELOG:
+16 Oct 2015
+- updated kernel config to 3.29.29
+- added SPIDEV and NFSD to kernel config
+
+
+KERNEL CHANGES:
+
+CONFIG_SPIDEV=y
+CONFIG_NFSD=y
+CONFIG_NFSD_V3=y
+CONFIG_NFSD_V4=y
+CONFIG_LOCKD=y
+CONFIG_LOCKD_V4=y
+CONFIG_NFS_ACL_SUPPORT=y
+CONFIG_NFS_COMMON=y
+CONFIG_SUNRPC=y
+CONFIG_SUNRPC_GSS=y
+
+
+INSTALLATION:
+
 This repository contains all necessary instructions needed to build an Rpicopter image.
 
 This contains:
@@ -6,7 +28,7 @@ config files
 instructions
 
 Instructions:
-get buildroot-2014.05
+get buildroot-2014.08
 extract it
 patch it using files in files/buildroot_patches folder
 copy files/configs/buildroot_config into your buildroot folder and rename it to .config
