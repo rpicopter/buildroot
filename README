@@ -1,43 +1,24 @@
+This repository contains all necessary things needed to build an AvrMiniCopter image using buildroot.
+
 CHANGELOG:
-16 Oct 2015
+10 Dec 2014
+- Using Buildroot-2014.11
+- adding ffmpeg, gstreamer1, janus-gateway, raspimjpeg
+
+16 Oct 2014
 - updated kernel config to 3.29.29
 - added SPIDEV and NFSD to kernel config
 
 
-KERNEL CHANGES:
-
-CONFIG_SPIDEV=y
-CONFIG_NFSD=y
-CONFIG_NFSD_V3=y
-CONFIG_NFSD_V4=y
-CONFIG_LOCKD=y
-CONFIG_LOCKD_V4=y
-CONFIG_NFS_ACL_SUPPORT=y
-CONFIG_NFS_COMMON=y
-CONFIG_SUNRPC=y
-CONFIG_SUNRPC_GSS=y
-
-
 INSTALLATION:
-
-This repository contains all necessary instructions needed to build an Rpicopter image.
-
-This contains:
-patches
-config files
-instructions
-
-Instructions:
-get buildroot-2014.08
-extract it
-patch it using files in files/buildroot_patches folder
-copy files/configs/buildroot_config into your buildroot folder and rename it to .config
-check that all paths are correctly set in .config
-	- global patch directory (~/rpicopter/buildroot/files/br_global_patches)
-	- default kernel config path (this needs to be a fully qualified path)
-	- post image create script
-	- DEPRECATED: xenomai ipipe file path (~/rpicopter/buildroot/files/xenomai/ipipe-core-3.10.34-arm-1.patch)
-
-make
-
-see buildroot/board/raspberrpi for further details on how to trasnfer it onto SD card
+- Download & extract official buildroot 
+- Patch it using files in files/buildroot_patches folder
+- Copy files/configs/buildroot_config into your buildroot folder and rename it to .config
+- Verify .config (or make menuconfig):
+	- global patch folder (BR2_GLOBAL_PATCH_DIR) - files/br_global_patches
+	- default kernel config (BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE) - files/configs/kernel_config
+	- NOTE: default kernel config path needs to be a fully qualified path
+	- post image create scripts
+		- BR2_ROOTFS_POST_BUILD_SCRIPT - files/post_build_cleanup.sh
+		- BR2_ROOTFS_POST_IMAGE_SCRIPT - files/create_image.sh
+- issue "make"

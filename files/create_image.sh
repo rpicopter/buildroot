@@ -1,6 +1,7 @@
 #!/bin/sh
 
-DISKSIZE=163840000 
+#DISKSIZE=163840000 
+DISKSIZE=256000000 
 #DISKSIZE=87040000 #bytes - should be divideable by sector size (512) 
 #FS1_SIZE=10240000 #bytes - should be divideable by sector size (512)
 FS1_SIZE=15360000
@@ -13,8 +14,8 @@ DISKSIZE_SECTORS=$(( $DISKSIZE / $SECTORSIZE ));
 FS1_SIZE_SECTORS=$(( $FS1_SIZE / $SECTORSIZE ));
 FS1_START_SECTOR=2048
 FS2_START_SECTOR=$(( $FS1_START_SECTOR + $FS1_SIZE_SECTORS + 1 ));
-FS2_START_SECTOR=22528
-FS2_START_SECTOR=32768
+#FS2_START_SECTOR=22528
+#FS2_START_SECTOR=32768
 
 rm rpicopter.img
 echo "Preparing image..."
@@ -41,20 +42,9 @@ sudo mount -o loop,rw,offset=$(( $FS1_START_SECTOR * $SECTORSIZE )) rpicopter.im
 sudo mount -o loop,rw,offset=$(( $FS2_START_SECTOR * $SECTORSIZE )) rpicopter.img tmp/fs2
 echo "- stage 4/6"
 
-
-
-#sudo cp $MY_PATH/configs/start.elf tmp/fs1/start.elf
-#sudo cp $MY_PATH/configs/fixup.dat tmp/fs1/fixup.dat
-#sudo cp $MY_PATH/configs/start_x.elf tmp/fs1/start_x.elf
-#sudo cp $MY_PATH/configs/fixup_x.dat tmp/fs1/fixup_x.dat
-#sudo cp $MY_PATH/configs/bootcode.bin tmp/fs1/bootcode.bin
-
+sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
 sudo cp $MY_PATH/configs/rpi_boot_config.txt tmp/fs1/config.txt
 sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
-
-sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
-#sudo cp $MY_PATH/configs/rpi_boot_config.txt tmp/fs1/config.txt
-#sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
 sudo cp $BR_IMAGE_DIR/zImage tmp/fs1
 sudo tar xf $BR_IMAGE_DIR/rootfs.tar -C tmp/fs2
 

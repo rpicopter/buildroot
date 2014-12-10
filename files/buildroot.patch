@@ -1,0 +1,753 @@
+diff -rupN package.orig/Config.in package/Config.in
+--- package.orig/Config.in	2014-12-10 20:28:18.917991477 +0000
++++ package/Config.in	2014-12-01 19:46:04.064622251 +0000
+@@ -2,6 +2,10 @@ menu "Target packages"
+ 
+ 	source "package/busybox/Config.in"
+ 
++menu "Rpicopter" 
++        source "package/rpicopter/Config.in" 
++endmenu
++
+ menu "Audio and video applications"
+ 	source "package/alsa-utils/Config.in"
+ 	source "package/aumix/Config.in"
+@@ -114,6 +118,7 @@ endif
+ if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+ 	source "package/gawk/Config.in"
+ endif
++	source "package/gengetopt/Config.in"
+ 	source "package/gettext/Config.in"
+ 	source "package/git/Config.in"
+ 	source "package/gperf/Config.in"
+@@ -801,6 +806,7 @@ menu "Networking"
+ 	source "package/libmnl/Config.in"
+ 	source "package/libmodbus/Config.in"
+ 	source "package/libndp/Config.in"
++	source "package/libnice/Config.in"
+ 	source "package/libnetfilter_acct/Config.in"
+ 	source "package/libnetfilter_conntrack/Config.in"
+ 	source "package/libnetfilter_cthelper/Config.in"
+@@ -819,12 +825,14 @@ menu "Networking"
+ 	source "package/libshairplay/Config.in"
+ 	source "package/libshout/Config.in"
+ 	source "package/libsoup/Config.in"
++	source "package/libsrtp/Config.in"
+ 	source "package/libstrophe/Config.in"
+ 	source "package/libtirpc/Config.in"
+ 	source "package/libtorrent/Config.in"
+ 	source "package/libupnp/Config.in"
+ 	source "package/libupnpp/Config.in"
+ 	source "package/libvncserver/Config.in"
++	source "package/libwebsock/Config.in"
+ 	source "package/libwebsockets/Config.in"
+ 	source "package/neon/Config.in"
+ 	source "package/nss-mdns/Config.in"
+@@ -835,6 +843,7 @@ menu "Networking"
+ 	source "package/rtmpdump/Config.in"
+ 	source "package/slirp/Config.in"
+ 	source "package/snmppp/Config.in"
++	source "package/sofia-sip/Config.in"
+ 	source "package/thrift/Config.in"
+ 	source "package/usbredir/Config.in"
+ 	source "package/wvstreams/Config.in"
+@@ -852,6 +861,7 @@ menu "Other"
+ 	source "package/clapack/Config.in"
+ 	source "package/classpath/Config.in"
+ 	source "package/cppcms/Config.in"
++	source "package/ding-libs/Config.in"
+ 	source "package/eigen/Config.in"
+ 	source "package/elfutils/Config.in"
+ 	source "package/fftw/Config.in"
+@@ -1025,6 +1035,7 @@ endif
+ 	source "package/iptraf-ng/Config.in"
+ 	source "package/iputils/Config.in"
+ 	source "package/iw/Config.in"
++	source "package/janus-gateway/Config.in"
+ 	source "package/kismet/Config.in"
+ 	source "package/knock/Config.in"
+ 	source "package/leafnode2/Config.in"
+diff -rupN package.orig/Config.in.host package/Config.in.host
+--- package.orig/Config.in.host	2014-12-10 20:28:18.909988537 +0000
++++ package/Config.in.host	2014-12-01 19:46:04.064622251 +0000
+@@ -8,6 +8,7 @@ menu "Host utilities"
+ 	source "package/e2tools/Config.in.host"
+ 	source "package/genext2fs/Config.in.host"
+ 	source "package/genimage/Config.in.host"
++	source "package/gengetopt/Config.in.host"
+ 	source "package/genpart/Config.in.host"
+ 	source "package/lpc3250loader/Config.in.host"
+ 	source "package/mtd/Config.in.host"
+diff -rupN package.orig/ding-libs/Config.in package/ding-libs/Config.in
+--- package.orig/ding-libs/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/ding-libs/Config.in	2014-12-01 19:46:04.064622251 +0000
+@@ -0,0 +1,9 @@
++config BR2_PACKAGE_DING_LIBS
++	bool "ding-libs"
++#	depends on BR2_TOOLCHAIN_BUILDROOT_LOCALE 
++	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
++	select BR2_PACKAGE_GETTEXT if BR2_NEEDS_GETTEXT
++	help
++	Adds ding-libs 
++	https://git.fedorahosted.org/git/ding-libs.git
++
+diff -rupN package.orig/ding-libs/ding-libs.mk package/ding-libs/ding-libs.mk
+--- package.orig/ding-libs/ding-libs.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/ding-libs/ding-libs.mk	2014-12-01 19:46:04.064622251 +0000
+@@ -0,0 +1,17 @@
++#############################################################
++#
++# ding-libs
++#
++#############################################################
++DING_LIBS_VERSION = 0_4_0
++DING_LIBS_SOURCE = ding_libs-$(DING_LIBS_VERSION).tar.xz
++DING_LIBS_SITE = https://git.fedorahosted.org/cgit/ding-libs.git/snapshot 
++#DING_LIBS_DEPENDENCIES = BR2_TOOLCHAIN_BUILDROOT_LOCALE
++DING_LIBS_DEPENDENCIES = $(if !$(BR2_ENABLE_LOCALE),libiconv) $(if $(BR2_NEEDS_GETTEXT),gettext) 
++DING_LIBS_AUTORECONF = YES
++DING_LIBS_INSTALL_STAGING = YES
++DING_LIBS_LICENSE = GPLv3
++DING_LIBS_LICENSE_FILES = COPYING
++DING_LIBS_MAKE=$(MAKE1)
++
++$(eval $(autotools-package))
+diff -rupN package.orig/gengetopt/Config.in package/gengetopt/Config.in
+--- package.orig/gengetopt/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/gengetopt/Config.in	2014-12-01 19:46:04.064622251 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_GENGETOPT
++	bool "gengetopt"
++	help
++	Adds GNU Gengetopt
++	Gengetopt is a tool to write command line option parsing code for C programs. 
++	http://www.gnu.org/software/gengetopt/gengetopt.html
+diff -rupN package.orig/gengetopt/Config.in.host package/gengetopt/Config.in.host
+--- package.orig/gengetopt/Config.in.host	1970-01-01 01:00:00.000000000 +0100
++++ package/gengetopt/Config.in.host	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_HOST_GENGETOPT
++	bool "host gengetopt"
++	help
++	Adds GNU Gengetopt
++	Gengetopt is a tool to write command line option parsing code for C programs. 
++	http://www.gnu.org/software/gengetopt/gengetopt.html
+diff -rupN package.orig/gengetopt/gengetopt.mk package/gengetopt/gengetopt.mk
+--- package.orig/gengetopt/gengetopt.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/gengetopt/gengetopt.mk	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,16 @@
++#############################################################
++#
++# gengetopt
++#
++#############################################################
++GENGETOPT_VERSION = 2.22.6
++GENGETOPT_SITE = ftp://ftp.gnu.org/gnu/gengetopt/
++GENGETOPT_AUTORECONF = YES
++GENGETOPT_LICENSE = GPLv3 
++GENGETOPT_LICENSE_FILES = COPYING
++
++GENGETOPT_MAKE=$(MAKE1)
++
++$(eval $(autotools-package))
++$(eval $(host-autotools-package))
++
+diff -rupN package.orig/janus-gateway/Config.in package/janus-gateway/Config.in
+--- package.orig/janus-gateway/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/janus-gateway/Config.in	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,13 @@
++config BR2_PACKAGE_JANUS_GATEWAY
++	bool "janus-gateway"
++	select BR2_PACKAGE_LIBMICROHTTPD
++	select BR2_PACKAGE_JANSSON
++	select BR2_PACKAGE_LIBNICE
++	select BR2_PACKAGE_SOFIA_SIP
++	select BR2_PACKAGE_LIBSRTP
++	select BR2_PACKAGE_DING_LIBS
++	select BR2_PACKAGE_LIBWEBSOCK
++	select BR2_PACKAGE_HOST_GENGETOPT
++	help
++	Adds janusgateway: 
++	https://github.com/meetecho/janus-gateway
+diff -rupN package.orig/janus-gateway/janus-gateway-0001-disable-ssp.patch package/janus-gateway/janus-gateway-0001-disable-ssp.patch
+--- package.orig/janus-gateway/janus-gateway-0001-disable-ssp.patch	1970-01-01 01:00:00.000000000 +0100
++++ package/janus-gateway/janus-gateway-0001-disable-ssp.patch	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,12 @@
++diff -rupN janus-gateway-master.orig/Makefile.am janus-gateway-master/Makefile.am
++--- janus-gateway-master.orig/Makefile.am	2014-11-27 14:36:31.000000000 +0000
+++++ janus-gateway-master/Makefile.am	2014-12-01 16:39:50.551935028 +0000
++@@ -14,7 +14,7 @@ AM_CFLAGS += -Wredundant-decls  # sophia
++ # some fairly big refactoring though, which can wait.
++ # AM_CFLAGS += -Wshadow -Wstrict-aliasing=2
++ 
++-AM_CFLAGS += -fstack-protector-all -g -ggdb -fPIC -rdynamic
+++AM_CFLAGS += -g -ggdb -fPIC -rdynamic
++ 
++ # FIXME: make docs work with distcheck
++ DISTCHECK_CONFIGURE_FLAGS = --disable-docs --enable-post-processing
+diff -rupN package.orig/janus-gateway/janus-gateway.mk package/janus-gateway/janus-gateway.mk
+--- package.orig/janus-gateway/janus-gateway.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/janus-gateway/janus-gateway.mk	2014-12-09 20:36:44.800741522 +0000
+@@ -0,0 +1,27 @@
++#############################################################
++#
++# janus-gateway
++#
++#############################################################
++JANUS_GATEWAY_VERSION = c632c1e9da5ffd8c34df6086a1aa5a8511a2a02d
++JANUS_GATEWAY_SITE_METHOD = git
++JANUS_GATEWAY_SITE = https://github.com/meetecho/janus-gateway.git
++JANUS_GATEWAY_LICENSE = GPLv3
++JANUS_GATEWAY_LICENSE_FILES = COPYING
++
++JANUS_GATEWAY_DEPENDENCIES = host-pkgconf libmicrohttpd jansson libnice sofia-sip libsrtp ding-libs libwebsock host-gengetopt
++
++# Straight out of the repository, no ./configure
++JANUS_GATEWAY_AUTORECONF = YES
++ 
++define JANUS_GATEWAY_M4
++        mkdir -p $(@D)/m4
++endef
++JANUS_GATEWAY_POST_PATCH_HOOKS += JANUS_GATEWAY_M4
++
++JANUS_GATEWAY_CONF_OPTS = --disable-data-channels \
++				--disable-rabbitmq 
++
++JANUS_GATEWAY_MAKE=$(MAKE1)
++
++$(eval $(autotools-package))
+diff -rupN package.orig/libnice/Config.in package/libnice/Config.in
+--- package.orig/libnice/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/libnice/Config.in	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_LIBNICE
++	bool "libnice"
++	select BR2_PACKAGE_LIBGLIB2
++	help
++	Adds libnice - The GLib ICE implementation
++	http://nice.freedesktop.org/wiki/
+diff -rupN package.orig/libnice/libnice-0001-build-IPV6_RECVERR.patch package/libnice/libnice-0001-build-IPV6_RECVERR.patch
+--- package.orig/libnice/libnice-0001-build-IPV6_RECVERR.patch	1970-01-01 01:00:00.000000000 +0100
++++ package/libnice/libnice-0001-build-IPV6_RECVERR.patch	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,20 @@
++diff -rupN libnice-0.1.8.orig/stun/usages/bind.c libnice-0.1.8/stun/usages/bind.c
++--- libnice-0.1.8.orig/stun/usages/bind.c	2014-09-22 18:01:28.000000000 +0100
+++++ libnice-0.1.8/stun/usages/bind.c	2014-12-01 13:28:32.144707407 +0000
++@@ -257,12 +257,16 @@ static int stun_socket (int family, int
++     int yes = 1;
++     switch (family)
++     {
+++#ifdef IP_RECVERR
++       case AF_INET:
++         setsockopt (fd, SOL_IP, IP_RECVERR, &yes, sizeof (yes));
+++#endif
++         break;
+++#ifdef IPV6_RECVERR
++       case AF_INET6:
++         setsockopt (fd, SOL_IPV6, IPV6_RECVERR, &yes, sizeof (yes));
++         break;
+++#endif
++       default:
++         /* Nothing to do. */
++         break;
+diff -rupN package.orig/libnice/libnice.mk package/libnice/libnice.mk
+--- package.orig/libnice/libnice.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/libnice/libnice.mk	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,11 @@
++#############################################################
++#
++# libnice 
++#
++#############################################################
++LIBNICE_VERSION = 0.1.8
++LIBNICE_SITE = http://nice.freedesktop.org/releases/
++LIBNICE_DEPENDENCIES = libglib2
++LIBNICE_INSTALL_STAGING = YES
++
++$(eval $(autotools-package))
+diff -rupN package.orig/libsrtp/Config.in package/libsrtp/Config.in
+--- package.orig/libsrtp/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/libsrtp/Config.in	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_LIBSRTP
++	bool "libsrtp"
++	help
++	Adds libsrtp
++	https://github.com/cisco/libsrtp
+diff -rupN package.orig/libsrtp/libsrtp.mk package/libsrtp/libsrtp.mk
+--- package.orig/libsrtp/libsrtp.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/libsrtp/libsrtp.mk	2014-12-09 20:38:37.312969564 +0000
+@@ -0,0 +1,13 @@
++#############################################################
++#
++# libsrtp
++#
++#############################################################
++LIBSRTP_VERSION = v1.5.0
++LIBSRTP_SITE_METHOD = git
++#LIBSRTP_SITE = https://github.com/cisco/libsrtp/
++#LIBSRTP_AUTORECONF = YES
++LIBSRTP_INSTALL_STAGING = YES
++LIBSRTP_LICENSE = BSD-3c 
++
++$(eval $(autotools-package))
+diff -rupN package.orig/libwebsock/Config.in package/libwebsock/Config.in
+--- package.orig/libwebsock/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/libwebsock/Config.in	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_LIBWEBSOCK
++	bool "libwebsock"
++	select BR2_PACKAGE_LIBEVENT
++	help
++	Adds libwebsock
++	https://github.com/payden/libwebsock
+diff -rupN package.orig/libwebsock/libwebsock.mk package/libwebsock/libwebsock.mk
+--- package.orig/libwebsock/libwebsock.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/libwebsock/libwebsock.mk	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,22 @@
++#############################################################
++#
++# libwebsock
++#
++#############################################################
++LIBWEBSOCK_VERSION = 3c1615eeadb0b582b63851073bfe3e5132f31ebc 
++LIBWEBSOCK_SITE_METHOD = git
++LIBWEBSOCK_SITE = https://github.com/payden/libwebsock.git
++LIBWEBSOCK_DEPENDENCIES = libevent
++LIBWEBSOCK_AUTORECONF = YES
++LIBWEBSOCK_INSTALL_STAGING = YES
++LIBWEBSOCK_LICENSE = LGPLv3
++LIBWEBSOCK_LICENSE_FILES = COPYING
++
++LIBWEBSOCK_CFLAGS = $(TARGET_CFLAGS)
++LIBWEBSOCK_LIBS += -lpthread -levent
++
++LIBWEBSOCK_CONF_ENV += \
++        CFLAGS="$(LIBWEBSOCK_CFLAGS)" \
++        LIBS="$(LIBWEBSOCK_LIBS)"
++
++$(eval $(autotools-package))
+diff -rupN package.orig/rpicopter/Config.in package/rpicopter/Config.in
+--- package.orig/rpicopter/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/Config.in	2014-11-30 23:25:33.412196329 +0000
+@@ -0,0 +1,25 @@
++config BR2_PACKAGE_RPICOPTER
++	bool "rpicopter"
++	help
++	  Adds rpicopter utils package
++	  https://github.com/rpicopter 
++
++if BR2_PACKAGE_RPICOPTER
++source "package/rpicopter/rpic-controller/Config.in"
++source "package/rpicopter/rpic-gpac/Config.in"
++
++#source "package/rpicopter/rpic-janusgateway/Config.in"
++#source "package/rpicopter/rpic-libnice/Config.in"
++#source "package/rpicopter/rpic-sofiasip/Config.in"
++#source "package/rpicopter/rpic-dinglibs/Config.in"
++#source "package/rpicopter/rpic-libsrtp/Config.in"
++#source "package/rpicopter/rpic-libwebsock/Config.in"
++
++source "package/rpicopter/rpic-raspimjpeg/Config.in"
++source "package/rpicopter/rpic-avrcontroller/Config.in"
++source "package/rpicopter/rpic-bluez-tools/Config.in"
++source "package/rpicopter/rpic-utils/Config.in"
++source "package/rpicopter/rpic-pigpio/Config.in"
++source "package/rpicopter/rpic-servoblaster/Config.in"
++source "package/rpicopter/rpic-qtsixa/Config.in"
++endif
+diff -rupN package.orig/rpicopter/rpic-avrcontroller/Config.in package/rpicopter/rpic-avrcontroller/Config.in
+--- package.orig/rpicopter/rpic-avrcontroller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-avrcontroller/Config.in	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_AVRCONTROLLER
++	bool "rpic-avrcontroller"
++	help
++	  Adds avr controller package
++	  https://github.com/rpicopter/avrcontroller
+diff -rupN package.orig/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk
+--- package.orig/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-avrcontroller/rpic-avrcontroller.mk	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,21 @@
++#############################################################
++#
++# rpic-avrcontroller 
++#
++#############################################################
++RPIC_AVRCONTROLLER_VERSION = master
++RPIC_AVRCONTROLLER_SITE_METHOD = git
++RPIC_AVRCONTROLLER_REPO_URL = https://github.com/rpicopter/AvrMiniCopter.git
++RPIC_AVRCONTROLLER_SITE = $(call qstrip,$(RPIC_AVRCONTROLLER_REPO_URL))
++RPIC_AVRCONTROLLER_DEPENDENCIES = linux
++
++define RPIC_AVRCONTROLLER_BUILD_CMDS
++	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/rpi all
++	$(MAKE) -C $(@D)/rpi $(LINUX_MAKE_FLAGS) KERNEL_SRC=$(LINUX_DIR) KVERSION=$(LINUX_VERSION_PROBED) modules
++endef
++
++define RPIC_AVRCONTROLLER_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D)/rpi install 
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-bluez-tools/Config.in package/rpicopter/rpic-bluez-tools/Config.in
+--- package.orig/rpicopter/rpic-bluez-tools/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-bluez-tools/Config.in	2014-12-01 21:28:59.917738046 +0000
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_RPIC_BLUEZ_TOOLS
++    bool "rpic-bluez-tools"
++    select BR2_PACKAGE_DBUS_GLIB
++#    depends on BR2_PACKAGE_READLINE
++    help
++        bluez-tools
++        https://github.com/rpicopter/bluez-tools
+diff -rupN package.orig/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk
+--- package.orig/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-bluez-tools/rpic-bluez-tools.mk	2014-12-01 21:26:47.298486358 +0000
+@@ -0,0 +1,14 @@
++#############################################################
++#
++# rpic-bluez-tools 
++#
++#############################################################
++RPIC_BLUEZ_TOOLS_VERSION = master
++RPIC_BLUEZ_TOOLS_DEPENDENCIES = dbus-glib
++RPIC_BLUEZ_TOOLS_SITE_METHOD = git
++RPIC_BLUEZ_TOOLS_REPO_URL = https://github.com/rpicopter/bluez-tools.git
++RPIC_BLUEZ_TOOLS_SITE = $(call qstrip,$(RPIC_BLUEZ_TOOLS_REPO_URL))
++RPIC_BLUEZ_TOOLS_INSTALL_TARGET = YES
++RPIC_BLUEZ_TOOLS_AUTORECONF = YES
++
++$(eval $(autotools-package))
+diff -rupN package.orig/rpicopter/rpic-controller/Config.in package/rpicopter/rpic-controller/Config.in
+--- package.orig/rpicopter/rpic-controller/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-controller/Config.in	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_CONTROLLER
++	bool "rpic-controller"
++	help
++	  Adds controller package
++	  https://github.com/rpicopter/controller
+diff -rupN package.orig/rpicopter/rpic-controller/rpic-controller.mk package/rpicopter/rpic-controller/rpic-controller.mk
+--- package.orig/rpicopter/rpic-controller/rpic-controller.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-controller/rpic-controller.mk	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,22 @@
++#############################################################
++#
++# rpic-controller 
++#
++#############################################################
++RPIC_CONTROLLER_VERSION = master
++RPIC_CONTROLLER_SITE_METHOD = git
++RPIC_CONTROLLER_REPO_URL = https://github.com/rpicopter/controller.git
++RPIC_CONTROLLER_SITE = $(call qstrip,$(RPIC_CONTROLLER_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_CONTROLLER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define RPIC_CONTROLLER_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-gpac/Config.in package/rpicopter/rpic-gpac/Config.in
+--- package.orig/rpicopter/rpic-gpac/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-gpac/Config.in	2014-11-30 23:16:28.348543168 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_RPIC_GPAC
++	bool "rpic-gpac"
++	help
++	Adds multimedia framework GPAC
++	https://github.com/gpac/gpac
++	
+diff -rupN package.orig/rpicopter/rpic-gpac/rpic-gpac.mk package/rpicopter/rpic-gpac/rpic-gpac.mk
+--- package.orig/rpicopter/rpic-gpac/rpic-gpac.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-gpac/rpic-gpac.mk	2014-11-30 23:19:30.041762503 +0000
+@@ -0,0 +1,36 @@
++#############################################################
++#
++# rpic-gpac 
++#
++#############################################################
++RPIC_GPAC_VERSION = master
++RPIC_GPAC_SITE_METHOD = git
++RPIC_GPAC_REPO_URL = https://github.com/gpac/gpac.git 
++RPIC_GPAC_SITE = $(call qstrip,$(RPIC_GPAC_REPO_URL))
++
++RPIC_GPAC_OPT += $(call qstrip,$(BR2_PACKAGE_RPIC_GPAC_EXTRACONF))
++
++
++RPIC_GPAC_CONF_OPTS = \
++        --prefix=/usr 
++
++define RPIC_GPAC_CONFIGURE_CMDS
++        (cd $(RPIC_GPAC_SRCDIR) && rm -rf config.cache && \
++        $(TARGET_CONFIGURE_OPTS) \
++        $(TARGET_CONFIGURE_ARGS) \
++        $(RPIC_GPAC_CONF_ENV) \
++        ./configure \
++                --enable-cross-compile  \
++                --cross-prefix=$(TARGET_CROSS) \
++                --sysroot=$(STAGING_DIR) \
++                --host-cc="$(HOSTCC)" \
++                --arch=$(BR2_ARCH) \
++		--cpu=$(BR2_GCC_TARGET_TUNE) \
++                --target-os="linux" \
++                --disable-stripping \
++                $(SHARED_STATIC_LIBS_OPTS) \
++                $(RPIC_GPAC_CONF_OPTS) \
++        )
++endef
++
++$(eval $(autotools-package))
+diff -rupN package.orig/rpicopter/rpicopter.mk package/rpicopter/rpicopter.mk
+--- package.orig/rpicopter/rpicopter.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpicopter.mk	2014-11-30 23:16:28.340540942 +0000
+@@ -0,0 +1 @@
++include package/rpicopter/*/*.mk
+diff -rupN package.orig/rpicopter/rpic-pigpio/Config.in package/rpicopter/rpic-pigpio/Config.in
+--- package.orig/rpicopter/rpic-pigpio/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-pigpio/Config.in	2014-11-30 23:16:28.352544258 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_PIGPIO
++	bool "rpic-pigpio"
++	help
++	  Adds pigpio package
++	  https://github.com/rpicopter/pigpio
+diff -rupN package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk package/rpicopter/rpic-pigpio/rpic-pigpio.mk
+--- package.orig/rpicopter/rpic-pigpio/rpic-pigpio.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-pigpio/rpic-pigpio.mk	2014-11-30 23:16:28.352544258 +0000
+@@ -0,0 +1,34 @@
++#############################################################
++#
++# rpic-pigpio 
++#
++#############################################################
++#RPIC_PIGPIO_VERSION = a26ed773d7792cca7f67c7baca530940cb991e5d
++RPIC_PIGPIO_VERSION = master
++RPIC_PIGPIO_SITE_METHOD = git
++RPIC_PIGPIO_REPO_URL = https://github.com/rpicopter/pigpio.git
++RPIC_PIGPIO_SITE = $(call qstrip,$(RPIC_PIGPIO_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_PIGPIO_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) all
++endef
++
++define RPIC_PIGPIO_INSTALL_TARGET_CMDS
++	$(INSTALL) -D -m 0755 -d              $(TARGET_DIR)/opt/pigpio/cgi
++	$(INSTALL)  -m 0755 -d              $(TARGET_DIR)/usr/local/include
++	$(INSTALL)  -m 0644 $(@D)/pigpio.h        $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0644 $(@D)/pigpiod_if.h    $(TARGET_DIR)/usr/local/include
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpio.a     $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0644 $(@D)/libpigpiod_if.a $(TARGET_DIR)/usr/local/lib
++	$(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++	$(INSTALL) -m 0755 $(@D)/pig2vcd         $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigpiod        $(TARGET_DIR)/usr/local/bin
++	$(INSTALL)  -m 0755 $(@D)/pigs           $(TARGET_DIR)/usr/local/bin
++
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-qtsixa/Config.in package/rpicopter/rpic-qtsixa/Config.in
+--- package.orig/rpicopter/rpic-qtsixa/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-qtsixa/Config.in	2014-11-30 23:16:28.372549678 +0000
+@@ -0,0 +1,6 @@
++config BR2_PACKAGE_RPIC_QTSIXA
++	bool "rpic-qtsixa"
++	depends on BR2_PACKAGE_LIBUSB_COMPAT
++	help
++	  Adds support for PS3 SixAxis controller
++	  https://github.com/rpicopter/QtSixA 
+diff -rupN package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk
+--- package.orig/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-qtsixa/rpic-qtsixa.mk	2014-12-01 17:41:34.582815871 +0000
+@@ -0,0 +1,45 @@
++#############################################################
++#
++# rpic-qtsixa
++#
++#############################################################
++#QTSIXA_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++RPIC_QTSIXA_VERSION = master
++RPIC_QTSIXA_SITE_METHOD = git
++RPIC_QTSIXA_DEPENDENCIES = bluez_utils
++RPIC_QTSIXA_REPO_URL = https://github.com/rpicopter/QtSixA.git
++RPIC_QTSIXA_SITE = $(call qstrip,$(RPIC_QTSIXA_REPO_URL))
++
++define RPIC_QTSIXA_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/sixad
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/utils
++endef
++
++define RPIC_QTSIXA_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/bin
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/sbin
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/default
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/init.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/etc/logrotate.d
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/var/lib/sixad/profiles
++
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/default/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.default $(TARGET_DIR)/etc/init.d/sixad
++	$(INSTALL) -m 644 $(@D)/sixad/sixad.log $(TARGET_DIR)/etc/logrotate.d/sixad
++	$(INSTALL) -m 755 $(@D)/sixad/sixad $(TARGET_DIR)/usr/bin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-bin $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-sixaxis $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-remote $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-3in1 $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/bins/sixad-raw $(TARGET_DIR)/usr/sbin/
++	$(INSTALL) -m 755 $(@D)/sixad/sixad-dbus-blocker $(TARGET_DIR)/usr/sbin/
++	@chmod 777 -R $(TARGET_DIR)/var/lib/sixad/
++
++
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/sixpair-kbd $(TARGET_DIR)/usr/local/bin/
++	$(INSTALL) -m 755 $(@D)/utils/bins/hidraw-dump $(TARGET_DIR)/usr/local/bin/
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-raspimjpeg/Config.in package/rpicopter/rpic-raspimjpeg/Config.in
+--- package.orig/rpicopter/rpic-raspimjpeg/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-raspimjpeg/Config.in	2014-11-30 23:16:28.368548594 +0000
+@@ -0,0 +1,4 @@
++config BR2_PACKAGE_RPIC_RASPIMJPEG
++	bool "rpic-raspimjpeg"
++	help
++		Adds raspimjpeg from https://github.com/rpicopter/raspimjpeg
+diff -rupN package.orig/rpicopter/rpic-raspimjpeg/rpic-raspimjpeg.mk package/rpicopter/rpic-raspimjpeg/rpic-raspimjpeg.mk
+--- package.orig/rpicopter/rpic-raspimjpeg/rpic-raspimjpeg.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-raspimjpeg/rpic-raspimjpeg.mk	2014-12-09 21:57:07.578635544 +0000
+@@ -0,0 +1,23 @@
++#############################################################
++#
++# rpic-raspimjpeg
++#
++#############################################################
++RPIC_RASPIMJPEG_VERSION = master
++RPIC_RASPIMJPEG_SITE_METHOD = git
++RPIC_RASPIMJPEG_REPO_URL = https://github.com/rpicopter/raspimjpeg.git
++RPIC_RASPIMJPEG_SITE = $(call qstrip,$(RPIC_RASPIMJPEG_REPO_URL))
++RPIC_RASPIMJPEG_DEPENDENCIES = rpi-userland rpic-gpac
++
++RPIC_RASPIMJPEG_BCM_H = $(TARGET_DIR)/usr/include/interface/ 
++RPIC_RASPIMJPEG_BCM_H = $(STAGING_DIR)/usr/include/interface/ 
++
++define RPIC_RASPIMJPEG_BUILD_CMDS
++	$(MAKE) $(TARGET_CONFIGURE_OPTS) BCM_H_DIR=$(RPIC_RASPIMJPEG_BCM_H) -C $(@D) all
++endef
++
++define RPIC_RASPIMJPEG_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-servoblaster/Config.in package/rpicopter/rpic-servoblaster/Config.in
+--- package.orig/rpicopter/rpic-servoblaster/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-servoblaster/Config.in	2014-11-30 23:16:28.372549678 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_RPIC_SERVOBLASTER
++	bool "rpic-servoblaster"
++	help
++	  Adds servoblaster
++	  https://github.com/rpicopter/ServoBlaster
+diff -rupN package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk
+--- package.orig/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-servoblaster/rpic-servoblaster.mk	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,21 @@
++#############################################################
++#
++# rpic-servoblaster
++#
++#############################################################
++#SERVOBLASTER_VERSION = ac0a6c3ef460acebd8f60fa9a44946056deed0aa
++RPIC_SERVOBLASTER_VERSION = master
++RPIC_SERVOBLASTER_SITE_METHOD = git
++RPIC_SERVOBLASTER_REPO_URL = https://github.com/rpicopter/servoblaster.git
++RPIC_SERVOBLASTER_SITE = $(call qstrip,$(RPIC_SERVOBLASTER_REPO_URL))
++
++define RPIC_SERVOBLASTER_BUILD_CMDS
++ $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/user all
++endef
++
++define RPIC_SERVOBLASTER_INSTALL_TARGET_CMDS
++       $(INSTALL) -m 0755 -d              $(TARGET_DIR)/usr/local/bin
++       $(INSTALL) -m 0755 $(@D)/user/servod         $(TARGET_DIR)/usr/local/bin
++endef
++
++$(eval $(generic-package))
+diff -rupN package.orig/rpicopter/rpic-utils/Config.in package/rpicopter/rpic-utils/Config.in
+--- package.orig/rpicopter/rpic-utils/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-utils/Config.in	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,7 @@
++config BR2_PACKAGE_RPIC_UTILS
++	bool "rpic-utils"
++#	select BR2_PACKAGE_BLUEZ_UTILS_COMPAT
++#	select BR2_PACKAGE_UDEV
++	help
++	  Adds utils package
++	  https://github.com/rpicopter/utils
+diff -rupN package.orig/rpicopter/rpic-utils/rpic-utils.mk package/rpicopter/rpic-utils/rpic-utils.mk
+--- package.orig/rpicopter/rpic-utils/rpic-utils.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/rpicopter/rpic-utils/rpic-utils.mk	2014-11-30 23:16:28.376550762 +0000
+@@ -0,0 +1,22 @@
++#############################################################
++#
++# rpic-utils 
++#
++#############################################################
++RPIC_UTILS_VERSION = master
++RPIC_UTILS_SITE_METHOD = git
++RPIC_UTILS_REPO_URL = https://github.com/rpicopter/utils.git
++RPIC_UTILS_SITE = $(call qstrip,$(RPIC_UTILS_REPO_URL))
++#PIGPIO_INSTALL_STAGING = YES
++
++#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
++
++define RPIC_UTILS_BUILD_CMDS
++endef
++
++
++define RPIC_UTILS_INSTALL_TARGET_CMDS
++	DESTDIR=$(TARGET_DIR) $(MAKE) -C $(@D) install 
++endef 
++
++$(eval $(generic-package))
+diff -rupN package.orig/sofia-sip/Config.in package/sofia-sip/Config.in
+--- package.orig/sofia-sip/Config.in	1970-01-01 01:00:00.000000000 +0100
++++ package/sofia-sip/Config.in	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,5 @@
++config BR2_PACKAGE_SOFIA_SIP
++	bool "sofia-sip"
++	help
++	Adds Sofia-SIP Library
++	http://sofia-sip.sourceforge.net
+diff -rupN package.orig/sofia-sip/sofia-sip.mk package/sofia-sip/sofia-sip.mk
+--- package.orig/sofia-sip/sofia-sip.mk	1970-01-01 01:00:00.000000000 +0100
++++ package/sofia-sip/sofia-sip.mk	2014-12-01 19:46:04.068624251 +0000
+@@ -0,0 +1,17 @@
++#############################################################
++#
++# sofiasip
++#
++#############################################################
++SOFIA_SIP_VERSION = 1.12.11
++SOFIA_SIP_SOURCE = sofia-sip-$(SOFIA_SIP_VERSION).tar.gz 
++SOFIA_SIP_SITE = http://downloads.sourceforge.net/project/sofia-sip/sofia-sip/$(SOFIA_SIP_VERSION) 
++SOFIA_SIP_INSTALL_STAGING = YES
++
++ifeq ($(BR2_TOOLCHAIN_BUILDROOT_INET_IPV6),y)
++else
++	SOFIA_SIP_CONF_OPTS = --disable-ip6
++endif
++
++
++$(eval $(autotools-package))
