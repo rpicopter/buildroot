@@ -2,6 +2,10 @@ This repository contains all necessary things needed to build an AvrMiniCopter i
 
 ####CHANGELOG:
 
+**10 Jan 2015**
+- adding rpcbind
+- testing
+
 **10 Dec 2014**
 - Using Buildroot-2014.11
 - adding ffmpeg, gstreamer1, janus-gateway, raspimjpeg
