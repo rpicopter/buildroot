@@ -48,6 +48,8 @@ sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
 sudo cp $BR_IMAGE_DIR/zImage tmp/fs1
 sudo tar xf $BR_IMAGE_DIR/rootfs.tar -C tmp/fs2
 
+sudo cp $MY_PATH/regulatory.bin tmp/fs2/usr/lib/crda/regulatory.bin
+
 echo "- stage 5/6"
 sudo umount tmp/fs1
 sudo umount tmp/fs2

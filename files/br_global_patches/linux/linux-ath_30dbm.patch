@@ -1,0 +1,36 @@
+diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/htc_drv_init.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/htc_drv_init.c
+--- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/htc_drv_init.c	2015-01-14 16:55:55.000000000 +0000
++++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/htc_drv_init.c	2015-02-06 11:47:36.189860919 +0000
+@@ -41,7 +41,7 @@ MODULE_PARM_DESC(ps_enable, "Enable WLAN
+ #define CHAN2G(_freq, _idx)  { \
+ 	.center_freq = (_freq), \
+ 	.hw_value = (_idx), \
+-	.max_power = 20, \
++	.max_power = 30, \
+ }
+ 
+ #define CHAN5G(_freq, _idx) { \
+diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/init.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/init.c
+--- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/init.c	2015-01-14 16:55:55.000000000 +0000
++++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/init.c	2015-02-06 11:51:47.031219023 +0000
+@@ -68,7 +68,7 @@ bool is_ath9k_unloaded;
+ 	.band = IEEE80211_BAND_2GHZ, \
+ 	.center_freq = (_freq), \
+ 	.hw_value = (_idx), \
+-	.max_power = 20, \
++	.max_power = 30, \
+ }
+ 
+ #define CHAN5G(_freq, _idx) { \
+diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/regd.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/regd.c
+--- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/regd.c	2015-01-14 16:55:55.000000000 +0000
++++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/regd.c	2015-02-06 11:48:56.033763008 +0000
+@@ -33,7 +33,7 @@ static int __ath_regd_init(struct ath_re
+  */
+ 
+ /* Only these channels all allow active scan on all world regulatory domains */
+-#define ATH9K_2GHZ_CH01_11	REG_RULE(2412-10, 2462+10, 40, 0, 20, 0)
++#define ATH9K_2GHZ_CH01_11	REG_RULE(2412-10, 2462+10, 40, 0, 30, 0)
+ 
+ /* We enable active scan on these a case by case basis by regulatory domain */
+ #define ATH9K_2GHZ_CH12_13	REG_RULE(2467-10, 2472+10, 40, 0, 20,\
