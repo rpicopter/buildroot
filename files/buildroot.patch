@@ -620,7 +620,7 @@ diff -rupN buildroot-2015.02.orig/package/rpicopter/rpic-utils/rpic-utils.mk bui
 +RPIC_UTILS_SITE_METHOD = git
 +RPIC_UTILS_REPO_URL = https://github.com/rpicopter/AvrMiniCopter-Utils.git
 +RPIC_UTILS_SITE = $(call qstrip,$(RPIC_UTILS_REPO_URL))
-+#PIGPIO_INSTALL_STAGING = YES
++RPIC_UTILS_DEPENDENCIES = php wpa_supplicant
 +
 +#$(MAKE) CC=$(TARGET_CC) LD=$(TARGET_LD) -C $(@D) all
 +
