@@ -1,7 +1,9 @@
 #!/bin/sh
 
 FDISK_ATTR='-u=sectors -c=nondos -b 512'
+#DISKSIZE=163840000 
 DISKSIZE=256000000 
+#DISKSIZE=87040000 #bytes - should be divideable by block size (1024) 
 #FS1_SIZE=10240000 #bytes - should be divideable by block size (1024)
 FS1_SIZE=15360000
 
@@ -20,20 +22,22 @@ FS1_START_SECTOR=$(( $FS1_START_BLOCK * $SECTORS_PER_BLOCK ));
 FS1_END_BLOCK=$(( $FS1_START_BLOCK + $FS1_SIZE_BLOCKS ));
 FS1_END_SECTOR=$(( $FS1_END_BLOCK * $SECTORS_PER_BLOCK ));
 
+FS2_START_BLOCK=$(( $FS1_END_BLOCK + 1 ));
+FS2_START_SECTOR=$(( $FS2_START_BLOCK * $SECTORS_PER_BLOCK ));
+#FS2_START_SECTOR=22528
+#FS2_START_SECTOR=32768
+
+echo "Partition 1 start sector: $FS1_START_SECTOR, size (sectors): $FS1_SIZE_SECTORS, size (blocks): $FS1_SIZE_BLOCKS"
+echo "Partition 2 start sector: $FS2_START_SECTOR"
+
 rm rpicopter.img
 echo "Preparing image..."
 dd if=/dev/zero of=rpicopter.img count=$DISKSIZE_SECTORS
 sudo losetup /dev/loop0 rpicopter.img
 echo "- stage 1/6" 
 
-echo "Partition 1 start sector: $FS1_START_SECTOR, size (sectors): $FS1_SIZE_SECTORS, size (blocks): $FS1_SIZE_BLOCKS"
-(echo n; echo p; echo 1; echo ; echo "$FS1_END_SECTOR"; echo t; echo b; echo w) | sudo fdisk $FDISK_ATTR /dev/loop0 > /dev/null 
-FS1_END_SECTOR=`sudo fdisk -l -u=sectors /dev/loop0 | grep p1 | awk '{print $3}'`
-FS2_START_SECTOR=$(( $FS1_END_SECTOR + 1 ));
-echo "Partition 2 start sector: $FS2_START_SECTOR"
-(echo n; echo p; echo 2; echo "$FS2_START_SECTOR"; echo ; echo t; echo 2; echo 83; echo w) | sudo fdisk $FDISK_ATTR /dev/loop0 > /dev/null 
+(echo n; echo p; echo 1; echo ; echo "$FS1_END_SECTOR"; echo t; echo b; echo n; echo p; echo 2; echo "$FS2_START_SECTOR"; echo ; echo t; echo 2; echo 83; echo w) | sudo fdisk $FDISK_ATTR /dev/loop0 > /dev/null 
 echo "- stage 2/6" 
-
 
 sudo losetup --offset $(( $SECTORSIZE * $FS1_START_SECTOR)) --sizelimit $FS1_SIZE /dev/loop1 /dev/loop0 
 echo "Offset 1: $(( $SECTORSIZE * $FS1_START_SECTOR ))"
@@ -61,8 +65,6 @@ sudo tar xf $BR_IMAGE_DIR/rootfs.tar -C tmp/fs2
 
 sudo cp $MY_PATH/regulatory.bin tmp/fs2/usr/lib/crda/regulatory.bin
 
-echo "Press [Enter] key to continue..."
-read dev 
 echo "- stage 5/6"
 sudo umount tmp/fs1
 sudo umount tmp/fs2
