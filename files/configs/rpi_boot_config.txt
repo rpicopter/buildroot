@@ -13,3 +13,6 @@ disable_overscan=1
 gpu_mem_256=128
 gpu_mem_512=256
 
+dtparam=spi=on
+dtparam=i2c_arm=on
+
