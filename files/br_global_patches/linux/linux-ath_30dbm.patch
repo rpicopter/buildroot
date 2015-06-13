@@ -1,19 +1,7 @@
-diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/htc_drv_init.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/htc_drv_init.c
---- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/htc_drv_init.c	2015-01-14 16:55:55.000000000 +0000
-+++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/htc_drv_init.c	2015-02-06 11:47:36.189860919 +0000
-@@ -41,7 +41,7 @@ MODULE_PARM_DESC(ps_enable, "Enable WLAN
- #define CHAN2G(_freq, _idx)  { \
- 	.center_freq = (_freq), \
- 	.hw_value = (_idx), \
--	.max_power = 20, \
-+	.max_power = 30, \
- }
- 
- #define CHAN5G(_freq, _idx) { \
-diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/init.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/init.c
---- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/ath9k/init.c	2015-01-14 16:55:55.000000000 +0000
-+++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/ath9k/init.c	2015-02-06 11:51:47.031219023 +0000
-@@ -68,7 +68,7 @@ bool is_ath9k_unloaded;
+diff -rupN linux-ba5b12366970b0fb07c29217a44334fdab94ea81/drivers/net/wireless/ath/ath9k/common-init.c linux-ba5b12366970b0fb07c29217a44334fdab94ea81-new/drivers/net/wireless/ath/ath9k/common-init.c
+--- linux-ba5b12366970b0fb07c29217a44334fdab94ea81/drivers/net/wireless/ath/ath9k/common-init.c	2015-01-14 16:55:55.000000000 +0000
++++ linux-ba5b12366970b0fb07c29217a44334fdab94ea81-new/drivers/net/wireless/ath/ath9k/common-init.c	2015-02-06 11:47:36.189860919 +0000
+@@ -22,7 +22,7 @@
  	.band = IEEE80211_BAND_2GHZ, \
  	.center_freq = (_freq), \
  	.hw_value = (_idx), \
@@ -22,9 +10,9 @@ diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/a
  }
  
  #define CHAN5G(_freq, _idx) { \
-diff -rupN linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/regd.c linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/regd.c
---- linux-9301f9aff699bc90c194e41c3fa6117a36c4954a/drivers/net/wireless/ath/regd.c	2015-01-14 16:55:55.000000000 +0000
-+++ linux-9301f9aff699bc90c194e41c3fa6117a36c4954a-new/drivers/net/wireless/ath/regd.c	2015-02-06 11:48:56.033763008 +0000
+diff -rupN linux-ba5b12366970b0fb07c29217a44334fdab94ea81/drivers/net/wireless/ath/regd.c linux-ba5b12366970b0fb07c29217a44334fdab94ea81-new/drivers/net/wireless/ath/regd.c
+--- linux-ba5b12366970b0fb07c29217a44334fdab94ea81/drivers/net/wireless/ath/regd.c	2015-01-14 16:55:55.000000000 +0000
++++ linux-ba5b12366970b0fb07c29217a44334fdab94ea81-new/drivers/net/wireless/ath/regd.c	2015-02-06 11:48:56.033763008 +0000
 @@ -33,7 +33,7 @@ static int __ath_regd_init(struct ath_re
   */
  

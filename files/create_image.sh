@@ -53,10 +53,11 @@ sudo mount -o loop,rw,offset=$(( $FS1_START_SECTOR * $SECTORSIZE )) /dev/loop0 t
 sudo mount -o loop,rw,offset=$(( $FS2_START_SECTOR * $SECTORSIZE )) /dev/loop0 tmp/fs2
 echo "- stage 4/6"
 
-sudo cp $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
+sudo cp -R $BR_IMAGE_DIR/rpi-firmware/* tmp/fs1
 sudo cp $MY_PATH/configs/rpi_boot_config.txt tmp/fs1/config.txt
 sudo cp $MY_PATH/configs/rpi_boot_cmdline.txt tmp/fs1/cmdline.txt
-sudo cp $BR_IMAGE_DIR/zImage tmp/fs1
+sudo $BR_IMAGE_DIR/../host/usr/bin/mkknlimg $BR_IMAGE_DIR/zImage tmp/fs1/zImage
+#sudo cp $BR_IMAGE_DIR/zImage tmp/fs1
 sudo tar xf $BR_IMAGE_DIR/rootfs.tar -C tmp/fs2
 
 sudo cp $MY_PATH/regulatory.bin tmp/fs2/usr/lib/crda/regulatory.bin
