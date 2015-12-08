@@ -2,6 +2,9 @@ This repository contains all necessary things needed to build an AvrMiniCopter i
 
 ####CHANGELOG:
 
+**08 Dec 2015**
+- adding bcm2835 package 
+
 **17 May 2015**
 - moving to buildroot-2015.02
 - syncing configs
