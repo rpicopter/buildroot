@@ -1,0 +1,76 @@
+diff -rupN avrdude.orig/configure.ac avrdude/configure.ac
+--- avrdude.orig/configure.ac	2015-06-13 22:06:46.406915297 +0100
++++ avrdude/configure.ac	2015-06-13 22:10:40.968137217 +0100
+@@ -201,7 +201,7 @@ AC_HEADER_TIME
+ AC_CHECK_FUNCS([memset select strcasecmp strdup strerror strncasecmp strtol strtoul gettimeofday usleep])
+ 
+ AC_MSG_CHECKING([for a Win32 HID libray])
+-SAVED_LIBS="${LIBS}"
++SAVED_LIBS="${LIBS} -lbcm2835"
+ case $target in
+         *-*-mingw32* | *-*-cygwin* | *-*-windows*)
+ 		LIBHID="-lhid -lsetupapi"
+diff -rupN avrdude.orig/linuxspi.c avrdude/linuxspi.c
+--- avrdude.orig/linuxspi.c	2015-06-13 22:06:46.410917218 +0100
++++ avrdude/linuxspi.c	2015-06-13 22:07:06.665039420 +0100
+@@ -46,7 +46,8 @@
+ #include <unistd.h>
+ #include <sys/ioctl.h>
+ #include <linux/types.h>
+-#include <linux/spi/spidev.h>
++#include <bcm2835.h>
++//#include <linux/spi/spidev.h>
+ 
+ #include <stddef.h>
+ #include <stdio.h>
+@@ -103,6 +104,8 @@ static int linuxspi_chip_erase(PROGRAMME
+  */
+ static int linuxspi_spi_duplex(PROGRAMMER* pgm, unsigned char* tx, unsigned char* rx, int len)
+ {
++
++/*
+     int fd = open(pgm->port, O_RDWR);
+     if (fd < 0)
+     {
+@@ -130,6 +133,20 @@ static int linuxspi_spi_duplex(PROGRAMME
+     }
+     
+     return ret;
++*/
++
++    bcm2835_spi_begin();
++    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);      // The default
++    bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                   // The default
++    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_512); // The default
++    bcm2835_spi_chipSelect(BCM2835_SPI_CS0);                      // The default
++    bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);      // the default
++
++    bcm2835_spi_transfernb(tx,rx,len);
++
++    bcm2835_spi_end();
++
++    return len;
+ }
+ 
+ /**
+@@ -185,6 +202,12 @@ static int linuxspi_gpio_op_wr(PROGRAMME
+ 
+ static void linuxspi_setup(PROGRAMMER* pgm)
+ {
++
++    if (!bcm2835_init()) {
++        fprintf(stderr, "%s: linuxspi_setup(): Unable to init bcm2835.\n", progname);
++	exit(1);
++    }
++
+     if ((pgm->cookie = malloc(sizeof(struct pdata))) == 0)
+     {
+         fprintf(stderr, "%s: linuxspi_setup(): Unable to allocate private memory.\n", progname);
+@@ -195,6 +218,7 @@ static void linuxspi_setup(PROGRAMMER* p
+ 
+ static void linuxspi_teardown(PROGRAMMER* pgm)
+ {
++    bcm2835_close();
+     free(pgm->cookie);
+ }
+ 
