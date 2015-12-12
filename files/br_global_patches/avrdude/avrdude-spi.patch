@@ -1,6 +1,6 @@
-diff -rupN avrdude.orig/configure.ac avrdude/configure.ac
---- avrdude.orig/configure.ac	2015-06-13 22:06:46.406915297 +0100
-+++ avrdude/configure.ac	2015-06-13 22:10:40.968137217 +0100
+diff -rupN avrdude.orig/avrdude/configure.ac avrdude/avrdude/configure.ac
+--- avrdude.orig/avrdude/configure.ac	2015-06-13 22:06:46.406915297 +0100
++++ avrdude/avrdude/configure.ac	2015-06-13 22:10:40.968137217 +0100
 @@ -201,7 +201,7 @@ AC_HEADER_TIME
  AC_CHECK_FUNCS([memset select strcasecmp strdup strerror strncasecmp strtol strtoul gettimeofday usleep])
  
@@ -10,9 +10,9 @@ diff -rupN avrdude.orig/configure.ac avrdude/configure.ac
  case $target in
          *-*-mingw32* | *-*-cygwin* | *-*-windows*)
  		LIBHID="-lhid -lsetupapi"
-diff -rupN avrdude.orig/linuxspi.c avrdude/linuxspi.c
---- avrdude.orig/linuxspi.c	2015-06-13 22:06:46.410917218 +0100
-+++ avrdude/linuxspi.c	2015-06-13 22:07:06.665039420 +0100
+diff -rupN avrdude.orig/avrdude/linuxspi.c avrdude/avrdude/linuxspi.c
+--- avrdude.orig/avrdude/linuxspi.c	2015-06-13 22:06:46.410917218 +0100
++++ avrdude/avrdude/linuxspi.c	2015-06-13 22:07:06.665039420 +0100
 @@ -46,7 +46,8 @@
  #include <unistd.h>
  #include <sys/ioctl.h>
